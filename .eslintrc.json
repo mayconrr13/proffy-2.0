@@ -26,6 +26,7 @@
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
+    "jsx-a11y/label-has-associated-control": "off",
     "import/no-extraneous-dependencies": "off",
     "prettier/prettier": "error",
     "react-hooks/rules-of-hooks": "error",
