@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   Container,
   FormContainer,
@@ -8,8 +9,6 @@ import {
 
 import { RegistrationInput } from '../../components/RegistrationInput';
 
-import logoImg from '../../assets/logo.svg';
-import descriptionImg from '../../assets/description.svg';
 import heartImg from '../../assets/heart.svg';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
@@ -37,7 +36,7 @@ export const Login = (): JSX.Element => {
               />
             </div>
 
-            <a href="/reset-password">Esqueci minha Senha</a>
+            <Link to="/reset-password">Esqueci minha Senha</Link>
 
             <RegistrationSubmitButton text="Entrar" disabled={!!(!a || !b)} />
           </Form>
@@ -45,7 +44,7 @@ export const Login = (): JSX.Element => {
           <AdditionalInformation>
             <div>
               <span>Não tem conta?</span>
-              <a href="/signup">Cadastre-se</a>
+              <Link to="/signup">Cadastre-se</Link>
             </div>
 
             <span>

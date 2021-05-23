@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import {
   Container,
   HomeHeader,
@@ -26,13 +28,13 @@ export const Home = (): JSX.Element => {
             <>
               <div>
                 <img src={profileImg} alt="Professor" />
-                <a href="/profile">Severo Snape</a>
+                <Link to="/profile">Severo Snape</Link>
               </div>
-              <a href="/home">Sair</a>
+              <Link to="/home">Sair</Link>
             </>
           ) : (
             <>
-              <a href="/login">Log In</a>
+              <Link to="/login">Log In</Link>
             </>
           )}
         </HomeHeader>
@@ -57,14 +59,14 @@ export const Home = (): JSX.Element => {
             <img src={heartImg} alt="Coração" />
           </p>
           <LinksContainer>
-            <a href="/login">
+            <Link to="/login">
               <img src={studyImg} alt="Estudar" />
               <span>Estudar</span>
-            </a>
-            <a href="/login">
+            </Link>
+            <Link to="/login">
               <img src={boardImg} alt="Dar Aulas" />
               <span>Dar Aulas</span>
-            </a>
+            </Link>
           </LinksContainer>
         </div>
       </CallToActionSection>

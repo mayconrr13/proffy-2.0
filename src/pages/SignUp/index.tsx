@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { RegistrationInput } from '../../components/RegistrationInput';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
@@ -14,9 +15,9 @@ export const SignUp = (): JSX.Element => {
     <Container>
       <FormContainer>
         <FormSection>
-          <a href="/login">
+          <Link to="/login">
             <img src={backArrowImg} alt="Voltar" />
-          </a>
+          </Link>
 
           <strong>Cadastro</strong>
           <span>

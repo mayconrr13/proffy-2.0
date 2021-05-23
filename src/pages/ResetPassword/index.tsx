@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
 import { Container, FormContainer, FormSection, Form } from './styles';
@@ -16,9 +17,9 @@ export const ResetPassword = (): JSX.Element => {
 
       <FormContainer>
         <FormSection>
-          <a href="/login">
+          <Link to="/login">
             <img src={backArrowImg} alt="Voltar" />
-          </a>
+          </Link>
 
           <strong>
             Eita, esqueceu
