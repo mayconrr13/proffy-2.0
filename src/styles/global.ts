@@ -9,6 +9,8 @@ export const GlobalStyle = createGlobalStyle`
 
   :root {
     --purple: #8257E5;
+    --dark-purple: #774DD6;
+    --darker-purple: #6842C2;
     --green: #04D361;
     --red: #E33D3D;
 
@@ -21,6 +23,7 @@ export const GlobalStyle = createGlobalStyle`
     --text-base-purple: #D4C2FF;
     --text-complement-purple: #A380F6;
 
+    --information-background: #FAFAFC;
     --background: #F0F0F7;
   }
 

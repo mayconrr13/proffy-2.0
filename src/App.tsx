@@ -4,6 +4,7 @@ import { Login } from './pages/Login';
 import { SignUp } from './pages/SignUp';
 import { ResetPassword } from './pages/ResetPassword';
 import { Success } from './pages/Success';
+import { Profile } from './pages/Profile';
 import { GlobalStyle } from './styles/global';
 
 function App(): JSX.Element {
@@ -16,6 +17,7 @@ function App(): JSX.Element {
         <Route path="/signup" component={SignUp} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/success/:id" component={Success} />
+        <Route path="/profile" component={Profile} />
       </Switch>
     </BrowserRouter>
   );
