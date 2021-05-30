@@ -6,6 +6,8 @@ import { ResetPassword } from './pages/ResetPassword';
 import { Success } from './pages/Success';
 import { Profile } from './pages/Profile';
 import { Teach } from './pages/Teach';
+import { Study } from './pages/Study';
+
 import { GlobalStyle } from './styles/global';
 
 function App(): JSX.Element {
@@ -20,6 +22,7 @@ function App(): JSX.Element {
         <Route path="/success/:id" component={Success} />
         <Route path="/profile" component={Profile} />
         <Route path="/teach" component={Teach} />
+        <Route path="/study" component={Study} />
       </Switch>
     </BrowserRouter>
   );
