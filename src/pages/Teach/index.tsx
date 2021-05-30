@@ -1,12 +1,10 @@
 import {
   Container,
   TopWrapper,
-  InsideAppHeader,
   InformationSection,
   FormWrapper,
   FormContent,
   Form,
-  BiographyInput,
   ScheduleContainer,
   ScheduleItem,
   BottomContainer,
@@ -16,10 +14,10 @@ import {
   DeleteScheduleSection,
 } from './styles';
 
+import { Header } from '../../components/Header';
 import { ProfileInput } from '../../components/ProfileInput';
+import { BiographyInput } from '../../components/BiographyInput';
 
-import backArrowImg from '../../assets/back-inside-app.svg';
-import logoImg from '../../assets/logo-inside-app.svg';
 import alertImg from '../../assets/alert.svg';
 import rocketImg from '../../assets/rocket.svg';
 import profileImg from '../../assets/profile-image.jpg';
@@ -28,13 +26,7 @@ export const Teach = (): JSX.Element => {
   return (
     <Container>
       <TopWrapper>
-        <InsideAppHeader>
-          <header>
-            <img src={backArrowImg} alt="Voltar" />
-            <span>Dar Aulas</span>
-            <img src={logoImg} alt="Logo" />
-          </header>
-        </InsideAppHeader>
+        <Header pageName="Dar aulas" />
 
         <InformationSection>
           <h1>
@@ -74,10 +66,7 @@ export const Teach = (): JSX.Element => {
               <ProfileInput id="whatsapp" label="Whatsapp" />
             </ContactSection>
 
-            <BiographyInput>
-              <label htmlFor="biography">Biografia</label>
-              <textarea id="biography" />
-            </BiographyInput>
+            <BiographyInput id="biography" label="Biografia" />
 
             <h3>Sobre a aula</h3>
             <span />

@@ -25,37 +25,6 @@ export const TopWrapper = styled.div`
   }
 `;
 
-export const InsideAppHeader = styled.div`
-  width: 100%;
-  height: 4rem;
-
-  padding: 0 2rem;
-  margin: 0 auto;
-
-  background-color: var(--dark-purple);
-  border: none;
-  border-bottom: 1px solid var(--darker-purple);
-
-  header {
-    width: 100%;
-    max-width: 1120px;
-    height: 100%;
-
-    margin: 0 auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    span {
-      color: var(--text-base-purple);
-      font-family: 'Archivo';
-      font-weight: 600;
-      letter-spacing: 0ch.5px;
-    }
-  }
-`;
-
 export const InformationSection = styled.section`
   padding: 0 2rem 2.5rem 2rem;
   margin: auto;
@@ -217,45 +186,6 @@ export const ContactSection = styled.section`
         margin-left: 1rem;
         width: 70%;
       }
-    }
-  }
-`;
-
-export const BiographyInput = styled.div`
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  margin-top: 1rem;
-
-  label {
-    font-size: 0.75rem;
-    color: var(--text-complement);
-    margin-bottom: 0.25rem;
-  }
-
-  textarea {
-    width: 100%;
-    height: 20rem;
-
-    padding: 1rem 1.5rem;
-    border: 1px solid var(--text-input);
-
-    border-radius: 0.5rem;
-    outline: none;
-
-    font-size: 0.85rem;
-    color: var(--text-base);
-
-    position: relative;
-    display: block;
-
-    resize: none;
-
-    &:focus {
-      border: 1px solid var(--text-base);
     }
   }
 `;

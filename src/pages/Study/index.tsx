@@ -1,29 +1,21 @@
+import { Header } from '../../components/Header';
 import { TeacherItem } from '../../components/TeacherItem/index';
 
 import {
   TopWrapper,
-  InsideAppHeader,
   InformationSection,
   FilterOptionsSection,
   TeachersContainer,
   InformationContainer,
 } from './styles';
 
-import backArrowImg from '../../assets/back-inside-app.svg';
-import logoImg from '../../assets/logo-inside-app.svg';
 import geekImg from '../../assets/geek.svg';
 
 export const Study = (): JSX.Element => {
   return (
     <div>
       <TopWrapper>
-        <InsideAppHeader>
-          <div>
-            <img src={backArrowImg} alt="Voltar" />
-            <span>Estudar</span>
-            <img src={logoImg} alt="Logo" />
-          </div>
-        </InsideAppHeader>
+        <Header pageName="Estudar" />
 
         <InformationContainer>
           <InformationSection>

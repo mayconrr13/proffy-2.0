@@ -59,7 +59,7 @@ export const Home = (): JSX.Element => {
             <img src={heartImg} alt="Coração" />
           </p>
           <LinksContainer>
-            <Link to="/login">
+            <Link to="/study">
               <img src={studyImg} alt="Estudar" />
               <span>Estudar</span>
             </Link>

@@ -39,19 +39,13 @@ export const Container = styled.div<ProfileInput>`
     margin-right: auto;
   }
 
-  input {
+  textarea {
     width: 100%;
+    height: 20rem;
 
     padding: 1rem 1.5rem;
+    border: 1px solid var(--text-input);
 
-    ${(props) =>
-      props.isFocused
-        ? css`
-            border: 1px solid var(--text-base);
-          `
-        : css`
-            border: 1px solid var(--text-input);
-          `}
     border-radius: 0.5rem;
     outline: none;
 
@@ -60,5 +54,11 @@ export const Container = styled.div<ProfileInput>`
 
     position: relative;
     display: block;
+
+    resize: none;
+
+    &:focus {
+      border: 1px solid var(--text-base);
+    }
   }
 `;

@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { Container } from './styles';
 
-interface ProfileInputProps {
+interface BiographyInputProps {
   id: string;
   label: string;
 }
 
-export const ProfileInput = ({ id, label }: ProfileInputProps): JSX.Element => {
+export const BiographyInput = ({
+  id,
+  label,
+}: BiographyInputProps): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <Container isFocused={isFocused}>
       <label htmlFor={id}>{label}</label>
-      <input
-        type="text"
+      <textarea
         id={id}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
