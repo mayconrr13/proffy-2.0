@@ -1,4 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useCallback } from 'react';
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import {
   Container,
   FormContainer,
@@ -13,10 +19,31 @@ import heartImg from '../../assets/heart.svg';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
 
+interface FormProps {
+  email: string;
+  password: string;
+}
+
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Insira um e-mail válido.')
+    .required('Insira um e-mail válido.'),
+  password: yup.string().min(8, 'A senha deve conter no mínimo 8 dígitos'),
+});
+
 export const Login = (): JSX.Element => {
-  // exemplo de comparacao de inputRef
-  const a = false;
-  const b = false;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormProps>({
+    resolver: yupResolver(schema),
+  });
+
+  const submitLogin = useCallback((data) => {
+    console.log(data);
+  }, []);
 
   return (
     <Container>
@@ -25,20 +52,26 @@ export const Login = (): JSX.Element => {
       <FormContainer>
         <FormSection>
           <strong>Fazer Login</strong>
-          <Form>
+          <Form onSubmit={handleSubmit(submitLogin)}>
             <div>
-              <RegistrationInput type="e-mail" label="E-mail" firstInput />
+              <RegistrationInput
+                type="e-mail"
+                label="E-mail"
+                firstInput
+                {...register('email')}
+              />
               <RegistrationInput
                 type="password"
                 label="Senha"
                 isPasswordInput
                 lastInput
+                {...register('password')}
               />
             </div>
 
             <Link to="/reset-password">Esqueci minha Senha</Link>
 
-            <RegistrationSubmitButton text="Entrar" disabled={!!(!a || !b)} />
+            <RegistrationSubmitButton text="Entrar" type="submit" />
           </Form>
 
           <AdditionalInformation>

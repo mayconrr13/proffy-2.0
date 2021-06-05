@@ -1,11 +1,16 @@
 /* eslint-disable react/require-default-props */
-import { useState } from 'react';
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  InputHTMLAttributes,
+  useState,
+} from 'react';
 import { Container } from './styles';
 
 import showPasswordImg from '../../assets/show-password.svg';
 import hidePasswordImg from '../../assets/hide-password.svg';
 
-interface RegistrationInputProps {
+interface RegistrationInputProps extends InputHTMLAttributes<HTMLInputElement> {
   type: string;
   label: string;
   isPasswordInput?: boolean;
@@ -13,13 +18,20 @@ interface RegistrationInputProps {
   lastInput?: boolean;
 }
 
-export const RegistrationInput = ({
-  type,
-  label,
-  isPasswordInput = false,
-  firstInput = false,
-  lastInput = false,
-}: RegistrationInputProps): JSX.Element => {
+const RegistrationInputBase: ForwardRefRenderFunction<
+  HTMLInputElement,
+  RegistrationInputProps
+> = (
+  {
+    type,
+    label,
+    isPasswordInput = false,
+    firstInput = false,
+    lastInput = false,
+    ...rest
+  }: RegistrationInputProps,
+  ref,
+): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
@@ -32,9 +44,14 @@ export const RegistrationInput = ({
       isLastInput={lastInput}
     >
       {isPasswordInput ? (
-        <input type={passwordIsVisible ? 'text' : 'password'} placeholder=" " />
+        <input
+          type={passwordIsVisible ? 'text' : 'password'}
+          placeholder=" "
+          ref={ref}
+          {...rest}
+        />
       ) : (
-        <input type={type} placeholder=" " />
+        <input type={type} placeholder=" " ref={ref} {...rest} />
       )}
       <span>{label}</span>
       {isPasswordInput && (
@@ -51,3 +68,5 @@ export const RegistrationInput = ({
     </Container>
   );
 };
+
+export const RegistrationInput = forwardRef(RegistrationInputBase);

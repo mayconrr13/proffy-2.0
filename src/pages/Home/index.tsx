@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { useEffect, useState } from 'react';
 import {
   Container,
   HomeHeader,
@@ -16,9 +17,25 @@ import homeImg from '../../assets/home-image.svg';
 import heartImg from '../../assets/heart.svg';
 import boardImg from '../../assets/board.svg';
 import studyImg from '../../assets/study.svg';
+import { api } from '../../services/api';
 
 export const Home = (): JSX.Element => {
   const user = false;
+  const [connections, setConnections] = useState(0);
+
+  useEffect(() => {
+    const getNumberOfConnections = async () => {
+      try {
+        const response = await api.get('/connections');
+
+        return setConnections(response.data.length);
+      } catch (error) {
+        return error.message;
+      }
+    };
+
+    getNumberOfConnections();
+  }, []);
 
   return (
     <Container>
@@ -54,10 +71,12 @@ export const Home = (): JSX.Element => {
         </span>
 
         <div>
-          <p>
-            Total de 285 conexões <br /> já realizadas
-            <img src={heartImg} alt="Coração" />
-          </p>
+          {connections && (
+            <p>
+              Total de {connections} conexões <br /> já realizadas{'  '}
+              <img src={heartImg} alt="Coração" />
+            </p>
+          )}
           <LinksContainer>
             <Link to="/study">
               <img src={studyImg} alt="Estudar" />

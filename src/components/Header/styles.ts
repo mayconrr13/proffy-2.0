@@ -22,6 +22,13 @@ export const Container = styled.header`
     align-items: center;
     justify-content: space-between;
 
+    button {
+      border: none;
+      background-color: transparent;
+      height: 100%;
+      line-height: 100%;
+    }
+
     span {
       color: var(--text-base-purple);
       font-family: 'Archivo';

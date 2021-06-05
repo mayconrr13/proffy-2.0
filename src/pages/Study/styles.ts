@@ -193,6 +193,12 @@ export const FilterOptionsSection = styled.form`
 export const TeachersContainer = styled.main`
   padding: 0 2rem 3rem 2rem;
 
+  > p {
+    margin: 5rem auto;
+    text-align: center;
+    font-weight: 600;
+  }
+
   > article + article {
     margin-top: 1.5rem;
   }
