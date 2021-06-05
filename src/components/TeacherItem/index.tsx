@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Container,
   TeacherSchedule,
@@ -6,107 +7,155 @@ import {
 } from './styles';
 
 import dayHourImg from '../../assets/day-hour.svg';
-import profileImg from '../../assets/profile-image.jpg';
 import whatsappImg from '../../assets/whatsapp.svg';
+import { api } from '../../services/api';
+import { subjectsOptions } from '../../data/selectMenuOptions';
 
-export const TeacherItem = (): JSX.Element => {
+const weekDaysInPortugues = [
+  'Segunda',
+  'Terça',
+  'Quarta',
+  'Quinta',
+  'Sexta',
+  'Sábado',
+];
+
+interface AvailableScheduleProps {
+  weekDay: number;
+  from: number;
+  to: number;
+}
+
+interface TeacherProps {
+  teacher: {
+    id: string;
+    name: string;
+    lastName: string;
+    email: string;
+    avatar: string;
+    whatsapp: string;
+    subject: string;
+    bio: string;
+    price: number;
+    availableSchedule: AvailableScheduleProps[];
+  };
+}
+
+export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
+  const formatedWeekDay = (weekDay: number): string => {
+    return weekDaysInPortugues[weekDay];
+  };
+
+  const formatedSubject = (subjectId: string): string => {
+    const selectedSubject = subjectsOptions.find(
+      (subject) => subject.id === subjectId,
+    );
+
+    return selectedSubject?.data ?? '';
+  };
+
+  const formatedHour = (hour: number): string => {
+    if (hour === 0) {
+      return '';
+    }
+    return `${(hour / 60).toFixed(0)}h`;
+  };
+
+  const formatedPrice = (value: number): string => {
+    return `R$ ${(value / 100).toFixed(0)},00`;
+  };
+
+  const formatedTeacherInfo = {
+    ...teacher,
+    subject: formatedSubject(teacher.subject),
+    price: formatedPrice(teacher.price),
+    availableSchedule: teacher.availableSchedule.map(
+      (schedule: AvailableScheduleProps) => {
+        return {
+          weekDay: formatedWeekDay(schedule.weekDay),
+          from: formatedHour(schedule.from),
+          to: formatedHour(schedule.to),
+          isAvailable: !!(schedule.from || schedule.to),
+        };
+      },
+    ),
+  };
+
+  const getInTouchWithTeacher = useCallback(
+    async (whatsapp: string, id: string) => {
+      try {
+        await api.post('/connections', {
+          connection: id,
+        });
+
+        window.open(`https://wa.me/55${whatsapp}`);
+
+        return;
+      } catch (error) {
+        alert(error.message);
+      }
+    },
+    [],
+  );
+
   return (
     <Container>
       <DetailsSection>
         <div>
-          <img src={profileImg} alt="Profile" />
+          <img
+            src={formatedTeacherInfo.avatar}
+            alt={formatedTeacherInfo.name}
+          />
           <div>
-            <strong>Severo Snape</strong>
-            <span>Poções</span>
+            <strong>{`${formatedTeacherInfo.name} ${formatedTeacherInfo.lastName}`}</strong>
+            <span>{formatedTeacherInfo.subject}</span>
           </div>
         </div>
 
         <div>
-          <p>Entusiasta das melhores tecnologias de química avançada.</p>
-          <p>
-            Apaixonado por explodir coisas em laboratório e por mudar a vida das
-            pessoas através de experiências. Mais de 200.000 pessoas já passaram
-            por uma das minhas explosões.
-          </p>
+          <p>{formatedTeacherInfo.bio}</p>
         </div>
 
         <div>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Segunda</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>18h - 18h</strong>
-            </div>
-          </TeacherSchedule>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Terça</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>-</strong>
-            </div>
-          </TeacherSchedule>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Quarta</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>8h - 18h</strong>
-            </div>
-          </TeacherSchedule>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Quinta</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>7h - 9h</strong>
-            </div>
-          </TeacherSchedule>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Sexta</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>10h - 13h</strong>
-            </div>
-          </TeacherSchedule>
-          <TeacherSchedule>
-            <div>
-              <span>Dia</span>
-              <strong>Sábado</strong>
-            </div>
-            <img src={dayHourImg} alt="Referente" />
-            <div>
-              <span>Horário</span>
-              <strong>9h - 22h</strong>
-            </div>
-          </TeacherSchedule>
+          {formatedTeacherInfo.availableSchedule.map((schedule) => {
+            return (
+              <TeacherSchedule
+                key={schedule.weekDay}
+                isAvailable={schedule.isAvailable}
+              >
+                <span />
+                <div>
+                  <span>Dia</span>
+                  <strong>{schedule.weekDay}</strong>
+                </div>
+                <img src={dayHourImg} alt="Referente" />
+                <div>
+                  <span>Horário</span>
+                  <strong>
+                    {schedule.from} - {schedule.to}
+                  </strong>
+                </div>
+              </TeacherSchedule>
+            );
+          })}
         </div>
       </DetailsSection>
 
       <ContactSection>
         <div>
           <span>Preço/hora</span>
-          <strong>R$ 20,00</strong>
+          <strong>{formatedTeacherInfo.price}</strong>
         </div>
 
-        <button type="button">
+        <button
+          type="button"
+          onClick={() =>
+            getInTouchWithTeacher(
+              formatedTeacherInfo.whatsapp,
+              formatedTeacherInfo.id,
+            )
+          }
+        >
           <img src={whatsappImg} alt="Whatsapp" />
           <span>Entrar em contato</span>
         </button>

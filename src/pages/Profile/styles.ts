@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import profileImg from '../../assets/profile-image.jpg';
 import profileBackgroundImg from '../../assets/profile-bg.svg';

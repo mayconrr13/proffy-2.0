@@ -114,7 +114,7 @@ export const InformationSection = styled.section`
   }
 `;
 
-export const FilterOptionsSection = styled.section`
+export const FilterOptionsSection = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -154,6 +154,21 @@ export const FilterOptionsSection = styled.section`
     }
   }
 
+  button {
+    width: 100%;
+    height: 3.5rem;
+    margin-top: 1rem;
+    background-color: var(--green);
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    color: #ffffff;
+
+    &:hover {
+      filter: brightness(0.8);
+    }
+  }
+
   @media (min-width: 600px) {
     flex-direction: row;
 
@@ -165,6 +180,12 @@ export const FilterOptionsSection = styled.section`
       margin-left: 1rem;
 
       width: 150%;
+    }
+
+    button {
+      margin-top: auto;
+      margin-left: 1rem;
+      width: 20%;
     }
   }
 `;

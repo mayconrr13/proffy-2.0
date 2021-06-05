@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.article`
   display: flex;
@@ -86,8 +86,13 @@ export const DetailsSection = styled.section`
   }
 `;
 
-export const TeacherSchedule = styled.article`
+interface TeacherScheduleProps {
+  isAvailable: boolean;
+}
+
+export const TeacherSchedule = styled.article<TeacherScheduleProps>`
   width: 100%;
+  position: relative;
 
   background-color: var(--information-background);
   border: 1px solid var(--text-input);
@@ -120,6 +125,26 @@ export const TeacherSchedule = styled.article`
 
   img {
     margin: 0 auto;
+  }
+
+  > span {
+    ${(props) =>
+      !props.isAvailable
+        ? css`
+            width: 100%;
+            height: 100%;
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+
+            background-color: #fafafc50;
+            border-radius: 0.5rem;
+          `
+        : css`
+            display: none;
+          `}
   }
 
   @media (min-width: 650px) {

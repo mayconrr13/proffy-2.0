@@ -51,27 +51,27 @@ export const subjectsOptions = [
 
 export const weekDayOptions = [
   {
-    id: 'monday',
+    id: 0,
     data: 'Segunda',
   },
   {
-    id: 'tuesday',
+    id: 1,
     data: 'Terça',
   },
   {
-    id: 'wednesday',
+    id: 2,
     data: 'Quarta',
   },
   {
-    id: 'Thursday',
+    id: 3,
     data: 'Quinta',
   },
   {
-    id: 'Friday',
+    id: 4,
     data: 'Sexta',
   },
   {
-    id: 'Saturday',
+    id: 5,
     data: 'Sábado',
   },
 ];
