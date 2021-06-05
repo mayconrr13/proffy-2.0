@@ -16,6 +16,7 @@ export const GlobalStyle = createGlobalStyle`
 
     --text-title: #32264D;
     --text-base: #6A6180;
+    --text-base-hover: #EBEBF5;
     --text-complement: #9C98A6;
     --text-input: #C1BCCC;
 

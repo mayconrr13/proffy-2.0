@@ -17,10 +17,16 @@ import {
 
 import { Header } from '../../components/Header';
 import { ProfileInput } from '../../components/ProfileInput';
+import { SelectBox } from '../../components/SelectBox';
 import { BiographyInput } from '../../components/BiographyInput';
 
 import cameraImg from '../../assets/camera.svg';
 import alertImg from '../../assets/alert.svg';
+import {
+  scheduleOptions,
+  subjectsOptions,
+  weekDayOptions,
+} from '../../data/selectMenuOptions';
 
 export const Profile = (): JSX.Element => {
   return (
@@ -62,7 +68,10 @@ export const Profile = (): JSX.Element => {
             <span />
 
             <ClassSection>
-              <ProfileInput id="subject" label="Disciplina" />
+              <div>
+                <span>Disciplina</span>
+                <SelectBox placeholder="Disciplina" content={subjectsOptions} />
+              </div>
               <ProfileInput id="price" label="Custo da sua hora por aula" />
             </ClassSection>
 
@@ -75,43 +84,26 @@ export const Profile = (): JSX.Element => {
 
               <ScheduleItem>
                 <ScheduleDetails>
-                  <ProfileInput id="weekDay" label="Dia da semana" />
+                  <div>
+                    <span>Dia da semana</span>
+                    <SelectBox placeholder="Dia" content={weekDayOptions} />
+                  </div>
 
                   <section>
-                    <ProfileInput id="from" label="Das" />
-                    <ProfileInput id="to" label="Até" />
-                  </section>
-                </ScheduleDetails>
-
-                <DeleteScheduleSection>
-                  <span />
-                  <button type="button">Excluir horário</button>
-                  <span />
-                </DeleteScheduleSection>
-              </ScheduleItem>
-              <ScheduleItem>
-                <ScheduleDetails>
-                  <ProfileInput id="weekDay" label="Dia da semana" />
-
-                  <section>
-                    <ProfileInput id="from" label="Das" />
-                    <ProfileInput id="to" label="Até" />
-                  </section>
-                </ScheduleDetails>
-
-                <DeleteScheduleSection>
-                  <span />
-                  <button type="button">Excluir horário</button>
-                  <span />
-                </DeleteScheduleSection>
-              </ScheduleItem>
-              <ScheduleItem>
-                <ScheduleDetails>
-                  <ProfileInput id="weekDay" label="Dia da semana" />
-
-                  <section>
-                    <ProfileInput id="from" label="Das" />
-                    <ProfileInput id="to" label="Até" />
+                    <div>
+                      <span>De</span>
+                      <SelectBox
+                        placeholder="Horário"
+                        content={scheduleOptions}
+                      />
+                    </div>
+                    <div>
+                      <span>Até</span>
+                      <SelectBox
+                        placeholder="Horário"
+                        content={scheduleOptions}
+                      />
+                    </div>
                   </section>
                 </ScheduleDetails>
 

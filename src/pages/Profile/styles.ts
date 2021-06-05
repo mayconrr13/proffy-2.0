@@ -197,7 +197,34 @@ export const ContactSection = styled.section`
   }
 `;
 
-export const ClassSection = ContactSection;
+export const ClassSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: 1.5rem;
+
+  > div {
+    width: 100%;
+
+    > span {
+      font-size: 0.75rem;
+      color: var(--text-complement);
+      margin-bottom: 0.25rem;
+      margin-right: auto;
+    }
+  }
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+
+    > div + div {
+      margin-left: 1rem;
+      margin-top: 0;
+      width: 50%;
+    }
+  }
+`;
 
 export const ScheduleContainer = styled.div`
   margin-bottom: 2.25rem;
@@ -246,10 +273,34 @@ export const ScheduleDetails = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+
+  > div {
+    width: 100%;
+
+    > span {
+      font-size: 0.75rem;
+      color: var(--text-complement);
+      margin-bottom: 0.25rem;
+      margin-right: auto;
+    }
+  }
 
   section {
     display: flex;
     align-items: center;
+    width: 100%;
+
+    > div {
+      width: 100%;
+
+      > span {
+        font-size: 0.75rem;
+        color: var(--text-complement);
+        margin-bottom: 0.25rem;
+        margin-right: auto;
+      }
+    }
 
     div + div {
       margin-left: 1rem;

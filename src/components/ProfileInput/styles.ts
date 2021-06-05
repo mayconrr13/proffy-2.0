@@ -41,6 +41,7 @@ export const Container = styled.div<ProfileInput>`
 
   input {
     width: 100%;
+    height: 3.5rem;
 
     padding: 1rem 1.5rem;
 

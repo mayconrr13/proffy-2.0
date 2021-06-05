@@ -128,7 +128,7 @@ export const FilterOptionsSection = styled.section`
 
     width: 100%;
 
-    label {
+    > span {
       color: var(--text-base-purple);
       font-weight: 400;
       font-size: 0.75rem;
@@ -137,15 +137,12 @@ export const FilterOptionsSection = styled.section`
       margin-bottom: 0.5rem;
     }
 
-    select {
+    div {
       width: 100%;
-      height: 3rem;
-
-      padding: 0 1rem;
     }
   }
 
-  div {
+  > div {
     display: flex;
     align-items: center;
     width: 100%;
@@ -163,7 +160,7 @@ export const FilterOptionsSection = styled.section`
     margin-top: auto;
     margin-bottom: -1.25rem;
 
-    div {
+    > div {
       margin-top: 0;
       margin-left: 1rem;
 

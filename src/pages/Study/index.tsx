@@ -1,4 +1,5 @@
 import { Header } from '../../components/Header';
+import { SelectBox } from '../../components/SelectBox';
 import { TeacherItem } from '../../components/TeacherItem/index';
 
 import {
@@ -10,6 +11,11 @@ import {
 } from './styles';
 
 import geekImg from '../../assets/geek.svg';
+import {
+  scheduleOptions,
+  subjectsOptions,
+  weekDayOptions,
+} from '../../data/selectMenuOptions';
 
 export const Study = (): JSX.Element => {
   return (
@@ -35,26 +41,17 @@ export const Study = (): JSX.Element => {
 
             <FilterOptionsSection>
               <section>
-                <label htmlFor="subject">Matéria</label>
-                <select name="subject" id="subject">
-                  <option value="math">Matemática</option>
-                  <option value="chemestry">Química</option>
-                </select>
+                <span>Disciplina</span>
+                <SelectBox placeholder="Disciplina" content={subjectsOptions} />
               </section>
               <div>
                 <section>
-                  <label htmlFor="weekDay">Dia da semana</label>
-                  <select name="weekDay" id="weekDay">
-                    <option value="monday">Segunda</option>
-                    <option value="tuesday">Terça</option>
-                  </select>
+                  <span>Dia da semana</span>
+                  <SelectBox placeholder="Dia" content={weekDayOptions} />
                 </section>
                 <section>
-                  <label htmlFor="hour">Horário</label>
-                  <select name="hour" id="hour">
-                    <option value="eigthAM">8 horas</option>
-                    <option value="nineAM">9 horas</option>
-                  </select>
+                  <span>Horário</span>
+                  <SelectBox placeholder="Horário" content={scheduleOptions} />
                 </section>
               </div>
             </FilterOptionsSection>
