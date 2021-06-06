@@ -33,11 +33,7 @@ const schema = yup.object().shape({
 });
 
 export const Login = (): JSX.Element => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormProps>({
+  const { register, handleSubmit } = useForm<FormProps>({
     resolver: yupResolver(schema),
   });
 

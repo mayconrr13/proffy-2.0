@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  TextareaHTMLAttributes,
+  useState,
+} from 'react';
 import { Container } from './styles';
 
-interface BiographyInputProps {
+interface BiographyInputProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string;
   label: string;
 }
 
-export const BiographyInput = ({
-  id,
-  label,
-}: BiographyInputProps): JSX.Element => {
+const BiographyInputBase: ForwardRefRenderFunction<
+  HTMLTextAreaElement,
+  BiographyInputProps
+> = ({ id, label, ...rest }: BiographyInputProps, ref): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -17,9 +23,13 @@ export const BiographyInput = ({
       <label htmlFor={id}>{label}</label>
       <textarea
         id={id}
-        onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        onFocus={() => setIsFocused(true)}
+        ref={ref}
+        {...rest}
       />
     </Container>
   );
 };
+
+export const BiographyInput = forwardRef(BiographyInputBase);

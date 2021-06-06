@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Header } from '../../components/Header';
 import { SelectBox } from '../../components/SelectBox';
 import { TeacherItem } from '../../components/TeacherItem/index';

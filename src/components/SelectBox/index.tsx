@@ -20,15 +20,20 @@ interface SelectBoxBaseProps extends InputHTMLAttributes<HTMLInputElement> {
     id: string | number;
     data: string;
   }[];
+  defaultItem?: string | number;
 }
 
 const SelectBoxBase: ForwardRefRenderFunction<
   HTMLInputElement,
   SelectBoxBaseProps
-> = ({ placeholder, content, ...rest }, ref): JSX.Element => {
+> = ({ placeholder, content, defaultItem, ...rest }, ref): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | number>('');
-  const [selectedOptionName, setSelectedOptionName] = useState('');
+  const [selectedOption, setSelectedOption] = useState<
+    string | number | undefined
+  >(defaultItem ?? undefined);
+  const [selectedOptionName, setSelectedOptionName] = useState(
+    content.find((item) => item.id === defaultItem)?.data ?? '',
+  );
 
   const handleSelectMenuOption = useCallback(
     (option: string | number, name: string) => {
@@ -42,7 +47,9 @@ const SelectBoxBase: ForwardRefRenderFunction<
   return (
     <Container isOpen={isOpen}>
       <div onClick={() => setIsOpen(!isOpen)}>
-        <span>{!selectedOption ? placeholder : selectedOptionName}</span>
+        <span>
+          {selectedOption === undefined ? placeholder : selectedOptionName}
+        </span>
         <FiChevronUp />
       </div>
       <ul>
@@ -54,6 +61,7 @@ const SelectBoxBase: ForwardRefRenderFunction<
             >
               <input
                 type="radio"
+                id="option"
                 style={{
                   width: '100%',
                   height: '100%',
