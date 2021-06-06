@@ -52,11 +52,6 @@
       "price": 4000,
       "availableSchedule": [
         {
-          "weekDay": 0,
-          "from": 0,
-          "to": 0
-        },
-        {
           "weekDay": 1,
           "from": 600,
           "to": 1200
@@ -65,16 +60,6 @@
           "weekDay": 2,
           "from": 900,
           "to": 1080
-        },
-        {
-          "weekDay": 3,
-          "from": 0,
-          "to": 0
-        },
-        {
-          "weekDay": 4,
-          "from": 0,
-          "to": 0
         },
         {
           "weekDay": 5,

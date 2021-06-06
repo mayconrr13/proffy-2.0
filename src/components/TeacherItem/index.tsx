@@ -9,7 +9,7 @@ import {
 import dayHourImg from '../../assets/day-hour.svg';
 import whatsappImg from '../../assets/whatsapp.svg';
 import { api } from '../../services/api';
-import { subjectsOptions } from '../../data/selectMenuOptions';
+import { scheduleOptions, subjectsOptions } from '../../data/selectMenuOptions';
 
 const weekDaysInPortugues = [
   'Segunda',
@@ -42,10 +42,6 @@ interface TeacherProps {
 }
 
 export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
-  const formatedWeekDay = (weekDay: number): string => {
-    return weekDaysInPortugues[weekDay];
-  };
-
   const formatedSubject = (subjectId: string): string => {
     const selectedSubject = subjectsOptions.find(
       (subject) => subject.id === subjectId,
@@ -69,16 +65,27 @@ export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
     ...teacher,
     subject: formatedSubject(teacher.subject),
     price: formatedPrice(teacher.price),
-    availableSchedule: teacher.availableSchedule.map(
-      (schedule: AvailableScheduleProps) => {
+    availableSchedule: weekDaysInPortugues.map((day, index) => {
+      const scheduleInformed = teacher.availableSchedule.find(
+        (schedule) => schedule.weekDay === index,
+      );
+
+      if (scheduleInformed !== undefined) {
         return {
-          weekDay: formatedWeekDay(schedule.weekDay),
-          from: formatedHour(schedule.from),
-          to: formatedHour(schedule.to),
-          isAvailable: !!(schedule.from || schedule.to),
+          weekDay: day,
+          from: formatedHour(scheduleInformed.from),
+          to: formatedHour(scheduleInformed.to),
+          isAvailable: !!(scheduleInformed.from || scheduleInformed.to),
         };
-      },
-    ),
+      }
+
+      return {
+        weekDay: day,
+        from: '',
+        to: '',
+        isAvailable: false,
+      };
+    }),
   };
 
   const getInTouchWithTeacher = useCallback(

@@ -59,32 +59,30 @@ export const Study = (): JSX.Element => {
     const { subject, day, hour } = formatedData;
 
     try {
-      const response = await api.get(
-        `/teachers?subject=${subject}&availableSchedule.weekDay=${day}`,
+      const response = await api.get<TeacherProps[]>(
+        `/teachers?subject=${subject}`,
       );
 
-      if (response.data.length === 0) {
+      if (response.data.length === 0 && teachers.length !== 0) {
+        setTeachers([]);
         return;
       }
 
-      const availableTeachers = response.data.filter(
-        (teacher: TeacherProps) => {
-          const dateIndex = teacher.availableSchedule.findIndex(
-            (schedule) => schedule.weekDay === day,
-          );
+      const filteredTeachersByWeekDay = response.data.filter((teacher) => {
+        return teacher.availableSchedule.some((date) => date.weekDay === day);
+      });
 
-          const availability = !!(
-            teacher.availableSchedule[dateIndex].from <= hour &&
-            teacher.availableSchedule[dateIndex].to >= hour
-          );
+      const availableTeachers = filteredTeachersByWeekDay.filter((teacher) => {
+        const isAvailable = teacher.availableSchedule.some((date) => {
+          return date.from <= hour && date.to >= hour;
+        });
 
-          return availability && teacher;
-        },
-      );
+        return isAvailable && teacher;
+      });
 
       setTeachers(availableTeachers);
     } catch (error) {
-      alert(error.message);
+      console.log(error.message);
     }
   }, []);
 
