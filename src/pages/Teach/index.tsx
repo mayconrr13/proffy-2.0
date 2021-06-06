@@ -88,24 +88,24 @@ export const Teach = (): JSX.Element => {
     const getFormInitialData = async () => {
       const response = await api.get(`/teachers?email=mayconrr13@gmail.com`);
 
-      setInitialAvailableSchedule([]);
-      setInitialSubject('');
-      reset({
-        whatsapp: '',
-        bio: '',
-        price: 0,
-        subject: '',
-        availableSchedule: [],
-      });
-      // setInitialAvailableSchedule(response.data[0].availableSchedule);
-      // setInitialSubject(response.data[0].subject);
+      // setInitialAvailableSchedule([]);
+      // setInitialSubject('');
       // reset({
-      //   whatsapp: response.data[0].whatsapp,
-      //   bio: response.data[0].bio,
-      //   price: response.data[0].price / 100,
-      //   subject: response.data[0].subject,
-      //   availableSchedule: response.data[0].availableSchedule,
+      //   whatsapp: '',
+      //   bio: '',
+      //   price: 0,
+      //   subject: '',
+      //   availableSchedule: [],
       // });
+      setInitialAvailableSchedule(response.data[0].availableSchedule);
+      setInitialSubject(response.data[0].subject);
+      reset({
+        whatsapp: response.data[0].whatsapp,
+        bio: response.data[0].bio,
+        price: response.data[0].price / 100,
+        subject: response.data[0].subject,
+        availableSchedule: response.data[0].availableSchedule,
+      });
       setIsLoading(false);
     };
 
