@@ -1,63 +1,34 @@
 {
   "connections": [
     {
-      "connection": "3747f84c-4a66-4635-a3cd-28bd756e73b2",
+      "connection": "9e47ba25-d5b3-4f0d-962f-141e4440f8cd",
       "id": 1
     },
     {
-      "connection": "3747f84c-4a66-4635-a3cd-28bd756e73b2",
+      "connection": "9e47ba25-d5b3-4f0d-962f-141e4440f8cd",
       "id": 2
-    },
+    }
+  ],
+  "registeredUsers": [
     {
-      "connection": "3d0806c3-a510-4d6f-a8fd-6640dbed8dde",
-      "id": 3
+      "email": "mayconrr134@gmail.com"
     }
   ],
   "teachers": [
     {
-      "id": "3d0806c3-a510-4d6f-a8fd-6640dbed8dde",
-      "name": "Maycon",
-      "lastName": "Reis Rosário",
-      "email": "mayconrr13@gmail.com",
-      "avatar": "https://avatars.githubusercontent.com/u/69278888?v=4",
-      "whatsapp": "62999631103",
-      "subject": "math",
-      "bio": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of, comes from a line in section 1.10.32.",
-      "price": 4000,
-      "availableSchedule": [
-        {
-          "weekDay": 0,
-          "from": 540,
-          "to": 900
-        },
-        {
-          "weekDay": 1,
-          "from": 1200,
-          "to": 1320
-        },
-        {
-          "weekDay": 4,
-          "from": 1080,
-          "to": 1320
-        }
-      ],
-      "updatedAt": 1622125378000,
-      "createdAt": 1620138178000
-    },
-    {
       "id": "3747f84c-4a66-4635-a3cd-28bd756e73b2",
-      "name": "Severo",
+      "name": "Severus",
       "lastName": "Snape",
       "email": "mayconrr134@gmail.com",
       "avatar": "https://avatars.githubusercontent.com/u/69278888?v=4",
-      "whatsapp": "62999631103",
-      "subject": "chimestry",
+      "whatsapp": "62999631104",
+      "subject": "biology",
       "bio": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of, comes from a line in section 1.10.32.",
       "price": 4000,
       "availableSchedule": [
         {
-          "weekDay": 1,
-          "from": 600,
+          "weekDay": 3,
+          "from": 480,
           "to": 1200
         },
         {
@@ -73,6 +44,36 @@
       ],
       "updatedAt": 1622125378000,
       "createdAt": 1620138178000
+    },
+    {
+      "id": "6e306ff1-274a-4192-8296-47edc5764808",
+      "name": "Maycon",
+      "lastName": "Rosário",
+      "email": "mayconrr13@gmail.com",
+      "avatar": "",
+      "whatsapp": "",
+      "bio": "",
+      "subject": "",
+      "price": 0,
+      "availableSchedule": []
+    },
+    {
+      "id": "9e47ba25-d5b3-4f0d-962f-141e4440f8cd",
+      "name": "dsadasdsdas",
+      "lastName": "sadadasas",
+      "email": "mayconrr13teste@gmail.com",
+      "avatar": "https://static.quizur.com/i/b/5a2edf749daa07.537244915a2edf7480ea66.31414583.jpg",
+      "whatsapp": "dasddsaasdsads",
+      "bio": "dadsadsdasdada",
+      "subject": "art",
+      "price": 2000,
+      "availableSchedule": [
+        {
+          "weekDay": "0",
+          "from": "480",
+          "to": "1320"
+        }
+      ]
     }
   ]
 }

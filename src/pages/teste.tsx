@@ -2,8 +2,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { forwardRef, ForwardRefRenderFunction, useState } from 'react';
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  useEffect,
+  useState,
+} from 'react';
 import { useForm } from 'react-hook-form';
+import { api } from '../services/api';
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement> = (
   { ...rest },
@@ -93,6 +99,22 @@ const Input = forwardRef(InputBase);
 
 export const Teste = (): JSX.Element => {
   const { register, handleSubmit } = useForm();
+
+  useEffect(() => {
+    const fecthApi = async () => {
+      const response = await api.get('/teachers', {
+        params: {
+          availableSchedule: {
+            weekDay: 21,
+          },
+        },
+      });
+
+      console.log(response.data);
+    };
+
+    fecthApi();
+  }, []);
 
   function submitted(data: any) {
     // console.log(data);

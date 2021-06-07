@@ -10,23 +10,26 @@ import { Study } from './pages/Study';
 import { Teste } from './pages/teste';
 
 import { GlobalStyle } from './styles/global';
+import { AuthProvider } from './hooks/useAuth';
 
 function App(): JSX.Element {
   return (
-    <BrowserRouter>
-      <GlobalStyle />
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/signup" component={SignUp} />
-        <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/success/:id" component={Success} />
-        <Route path="/profile" component={Profile} />
-        <Route path="/teach" component={Teach} />
-        <Route path="/study" component={Study} />
-        <Route path="/teste" component={Teste} />
-      </Switch>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <GlobalStyle />
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/signup" component={SignUp} />
+          <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/success/:id" component={Success} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/teach" component={Teach} />
+          <Route path="/study" component={Study} />
+          <Route path="/teste" component={Teste} />
+        </Switch>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

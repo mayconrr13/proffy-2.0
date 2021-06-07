@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
+
+import { v4 as uuid } from 'uuid';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -11,6 +13,8 @@ import { RegistrationSubmitButton } from '../../components/RegistrationSubmitBut
 import { Container, FormContainer, FormSection, Form } from './styles';
 
 import backArrowImg from '../../assets/back.svg';
+import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface FormProps {
   name: string;
@@ -36,11 +40,41 @@ export const SignUp = (): JSX.Element => {
     resolver: yupResolver(schema),
   });
 
-  console.log(errors);
+  const history = useHistory();
+  const { setUser } = useAuth();
 
-  const submitSignUp = useCallback((data) => {
-    console.log(data);
-  }, []);
+  const submitSignUp = useCallback(
+    async (data) => {
+      const { name, lastName, email, password } = data;
+
+      try {
+        const response = await api.get(`/registeredUsers?email=${email}`);
+
+        if (response.data.length !== 0) {
+          console.log('E-mail já cadastrado');
+          return;
+        }
+
+        await api.post('/teachers', {
+          id: uuid(),
+          name,
+          lastName,
+          email,
+          avatar: '',
+          whatsapp: '',
+          bio: '',
+          subject: '',
+          price: 0,
+          availableSchedule: [],
+        });
+
+        history.push('/success/1');
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+    [history, setUser],
+  );
 
   return (
     <Container>

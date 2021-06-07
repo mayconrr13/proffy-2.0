@@ -13,7 +13,7 @@ export const Header = ({ pageName }: HeaderProps): JSX.Element => {
   return (
     <Container>
       <div>
-        <button type="button" onClick={history.goBack}>
+        <button type="button" onClick={() => history.push('/')}>
           <img src={backArrowImg} alt="Voltar" />
         </button>
         <span>{pageName}</span>

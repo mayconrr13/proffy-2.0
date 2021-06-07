@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { useHistory } from 'react-router';
 import {
   Container,
   TopWrapper,
@@ -34,6 +35,7 @@ import {
   weekDayOptions,
 } from '../../data/selectMenuOptions';
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -60,8 +62,13 @@ export const Teach = (): JSX.Element => {
   const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
     AvailableScheduleProps[]
   >([] as AvailableScheduleProps[]);
+
   const [initialSubject, setInitialSubject] = useState('');
+
   const [isLoading, setIsLoading] = useState(true);
+
+  const { user } = useAuth();
+  const history = useHistory();
 
   const cleanInitialAvailableSchedule = useCallback(() => {
     if (initialAvailableSchedule.length === 0) {
@@ -80,37 +87,68 @@ export const Teach = (): JSX.Element => {
     control,
   });
 
-  const submitProfileChanges = useCallback((data) => {
-    console.log(data);
+  const submitProfileChanges = useCallback(async (data: FormProps) => {
+    try {
+      await api.patch(`/teachers/${user.id}`, {
+        whatsapp: data.whatsapp,
+        bio: data.bio,
+        subject: data.subject,
+        price: data.price * 100,
+        availableSchedule: data.availableSchedule,
+      });
+
+      console.log('Cadastro de aula realizado com sucesso');
+
+      history.push('/success/3');
+
+      return;
+    } catch (error) {
+      console.log(error.message);
+    }
   }, []);
 
   useEffect(() => {
-    const getFormInitialData = async () => {
-      const response = await api.get(`/teachers?email=mayconrr13@gmail.com`);
+    if (Object.keys(user).length === 0) {
+      history.push('/login');
+      return;
+    }
 
-      // setInitialAvailableSchedule([]);
-      // setInitialSubject('');
-      // reset({
-      //   whatsapp: '',
-      //   bio: '',
-      //   price: 0,
-      //   subject: '',
-      //   availableSchedule: [],
-      // });
-      setInitialAvailableSchedule(response.data[0].availableSchedule);
-      setInitialSubject(response.data[0].subject);
+    const getFormInitialData = async () => {
+      const response = await api.get(`/teachers?email=${user.email}`);
+
+      setInitialAvailableSchedule(
+        response.data[0]?.availableSchedule.map(
+          (schedule: AvailableScheduleProps) => {
+            return {
+              weekDay: Number(schedule.weekDay),
+              from: Number(schedule.from),
+              to: Number(schedule.to),
+            };
+          },
+        ),
+      );
+      setInitialSubject(response.data[0]?.subject);
       reset({
         whatsapp: response.data[0].whatsapp,
         bio: response.data[0].bio,
         price: response.data[0].price / 100,
         subject: response.data[0].subject,
-        availableSchedule: response.data[0].availableSchedule,
+        availableSchedule: response.data[0].availableSchedule.map(
+          (schedule: AvailableScheduleProps) => {
+            return {
+              weekDay: Number(schedule.weekDay),
+              from: Number(schedule.from),
+              to: Number(schedule.to),
+            };
+          },
+        ),
       });
+
       setIsLoading(false);
     };
 
     getFormInitialData();
-  }, [reset]);
+  }, []);
 
   if (isLoading === true) {
     return <p>Loading...</p>;

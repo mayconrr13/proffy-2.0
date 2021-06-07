@@ -32,7 +32,7 @@ export const successMessages: Message[] = [
       'Tudo certo, seu cadastro está na nossa lista de professores. Agora é só ficar de olho no seu WhatsApp.',
     button: {
       text: 'Acessar lista',
-      destinationPath: '/teachers-list',
+      destinationPath: '/study',
     },
   },
 ];

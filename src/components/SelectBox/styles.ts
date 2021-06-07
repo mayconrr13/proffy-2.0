@@ -56,6 +56,9 @@ export const Container = styled.div<ContainerProps>`
     align-items: center;
     background-color: #ffffff;
 
+    height: calc(3.5rem * 3);
+    overflow-y: auto;
+
     border-radius: 0 0 0.5rem 0.5rem;
     ${(props) =>
       props.isOpen

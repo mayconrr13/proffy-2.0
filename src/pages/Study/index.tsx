@@ -69,12 +69,14 @@ export const Study = (): JSX.Element => {
       }
 
       const filteredTeachersByWeekDay = response.data.filter((teacher) => {
-        return teacher.availableSchedule.some((date) => date.weekDay === day);
+        return teacher.availableSchedule.some(
+          (date) => Number(date.weekDay) === day,
+        );
       });
 
       const availableTeachers = filteredTeachersByWeekDay.filter((teacher) => {
         const isAvailable = teacher.availableSchedule.some((date) => {
-          return date.from <= hour && date.to >= hour;
+          return Number(date.from) <= hour && Number(date.to) >= hour;
         });
 
         return isAvailable && teacher;

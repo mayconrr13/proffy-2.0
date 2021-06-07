@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { useHistory } from 'react-router-dom';
 import {
   Container,
   TopWrapper,
@@ -35,6 +36,7 @@ import {
 } from '../../data/selectMenuOptions';
 
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -64,8 +66,13 @@ export const Profile = (): JSX.Element => {
   const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
     AvailableScheduleProps[]
   >([] as AvailableScheduleProps[]);
+
   const [initialSubject, setInitialSubject] = useState('');
+
   const [isLoading, setIsLoading] = useState(true);
+
+  const { user } = useAuth();
+  const history = useHistory();
 
   const cleanInitialAvailableSchedule = useCallback(() => {
     if (initialAvailableSchedule.length === 0) {
@@ -84,15 +91,45 @@ export const Profile = (): JSX.Element => {
     control,
   });
 
-  const submitProfileChanges = useCallback((data) => {
-    console.log(data);
+  const submitProfileChanges = useCallback(async (data) => {
+    try {
+      await api.patch(`/teachers/${user.id}`, {
+        name: data.name,
+        lastName: data.lastName,
+        email: data.email,
+        whatsapp: data.whatsapp,
+        bio: data.bio,
+        subject: data.subject,
+        price: data.price * 100,
+        availableSchedule: data.availableSchedule,
+      });
+
+      console.log('Dados atualizados com sucesso');
+
+      history.push('/');
+
+      return;
+    } catch (error) {
+      console.log(error.message);
+    }
   }, []);
 
   useEffect(() => {
     const getFormInitialData = async () => {
-      const response = await api.get(`/teachers?email=mayconrr13@gmail.com`);
+      const response = await api.get(`/teachers?email=${user.email}`);
 
-      setInitialAvailableSchedule(response.data[0].availableSchedule);
+      setInitialAvailableSchedule(
+        response.data[0].availableSchedule.map(
+          (schedule: AvailableScheduleProps) => {
+            return {
+              weekDay: Number(schedule.weekDay),
+              from: Number(schedule.from),
+              to: Number(schedule.to),
+            };
+          },
+        ),
+      );
+
       setInitialSubject(response.data[0].subject);
       reset({
         name: response.data[0].name,
@@ -102,7 +139,15 @@ export const Profile = (): JSX.Element => {
         bio: response.data[0].bio,
         price: response.data[0].price / 100,
         subject: response.data[0].subject,
-        availableSchedule: response.data[0].availableSchedule,
+        availableSchedule: response.data[0].availableSchedule.map(
+          (schedule: AvailableScheduleProps) => {
+            return {
+              weekDay: Number(schedule.weekDay),
+              from: Number(schedule.from),
+              to: Number(schedule.to),
+            };
+          },
+        ),
       });
       setIsLoading(false);
     };
@@ -133,7 +178,7 @@ export const Profile = (): JSX.Element => {
       </TopWrapper>
 
       <FormWrapper>
-        <Form>
+        <Form onSubmit={handleSubmit(submitProfileChanges)}>
           <FormContent>
             <h3>Seus dados</h3>
             <span />

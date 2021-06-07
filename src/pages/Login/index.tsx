@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
 
@@ -18,6 +18,8 @@ import { RegistrationInput } from '../../components/RegistrationInput';
 import heartImg from '../../assets/heart.svg';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
+import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface FormProps {
   email: string;
@@ -37,9 +39,30 @@ export const Login = (): JSX.Element => {
     resolver: yupResolver(schema),
   });
 
-  const submitLogin = useCallback((data) => {
-    console.log(data);
-  }, []);
+  const history = useHistory();
+  const { setUser } = useAuth();
+
+  const submitLogin = useCallback(
+    async (data) => {
+      const { email } = data;
+
+      try {
+        const response = await api.get(`/teachers?email=${email}`);
+
+        console.log(response.data[0]);
+        if (response.data.length === 0) {
+          console.log('Combinação de e-mail e senha inválida');
+          return;
+        }
+
+        setUser(response.data[0]);
+        history.push('/');
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+    [history, setUser],
+  );
 
   return (
     <Container>

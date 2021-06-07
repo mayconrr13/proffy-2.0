@@ -67,14 +67,14 @@ export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
     price: formatedPrice(teacher.price),
     availableSchedule: weekDaysInPortugues.map((day, index) => {
       const scheduleInformed = teacher.availableSchedule.find(
-        (schedule) => schedule.weekDay === index,
+        (schedule) => Number(schedule.weekDay) === index,
       );
 
       if (scheduleInformed !== undefined) {
         return {
           weekDay: day,
-          from: formatedHour(scheduleInformed.from),
-          to: formatedHour(scheduleInformed.to),
+          from: formatedHour(Number(scheduleInformed.from)),
+          to: formatedHour(Number(scheduleInformed.to)),
           isAvailable: !!(scheduleInformed.from || scheduleInformed.to),
         };
       }

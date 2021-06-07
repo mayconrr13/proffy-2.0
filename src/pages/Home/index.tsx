@@ -18,9 +18,10 @@ import heartImg from '../../assets/heart.svg';
 import boardImg from '../../assets/board.svg';
 import studyImg from '../../assets/study.svg';
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Home = (): JSX.Element => {
-  const user = false;
+  const { user } = useAuth();
   const [connections, setConnections] = useState(0);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export const Home = (): JSX.Element => {
     <Container>
       <TopSection>
         <HomeHeader>
-          {user ? (
+          {Object.keys(user).length ? (
             <>
               <div>
                 <img src={profileImg} alt="Professor" />
@@ -71,18 +72,20 @@ export const Home = (): JSX.Element => {
         </span>
 
         <div>
-          {connections && (
+          {connections ? (
             <p>
               Total de {connections} conexões <br /> já realizadas{'  '}
               <img src={heartImg} alt="Coração" />
             </p>
+          ) : (
+            <p />
           )}
           <LinksContainer>
             <Link to="/study">
               <img src={studyImg} alt="Estudar" />
               <span>Estudar</span>
             </Link>
-            <Link to="/login">
+            <Link to="/teach">
               <img src={boardImg} alt="Dar Aulas" />
               <span>Dar Aulas</span>
             </Link>
