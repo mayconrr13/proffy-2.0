@@ -5,6 +5,12 @@ import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { useAuth } from '../../hooks/useAuth';
+
+import { RegistrationInput } from '../../components/RegistrationInput';
+import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
+import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
+
 import {
   Container,
   FormContainer,
@@ -13,13 +19,7 @@ import {
   AdditionalInformation,
 } from './styles';
 
-import { RegistrationInput } from '../../components/RegistrationInput';
-
 import heartImg from '../../assets/heart.svg';
-import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
-import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
-import { api } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
 
 interface FormProps {
   email: string;
@@ -40,21 +40,21 @@ export const Login = (): JSX.Element => {
   });
 
   const history = useHistory();
-  const { setUser, signIn } = useAuth();
+  const { signIn } = useAuth();
 
   const submitLogin = useCallback(
     async (data) => {
       const { email, password } = data;
 
       try {
-        signIn(email, password);
+        await signIn(email, password);
 
         history.push('/');
       } catch (error) {
         console.log(error.message);
       }
     },
-    [history, setUser],
+    [history, signIn],
   );
 
   return (

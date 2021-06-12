@@ -5,7 +5,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { useHistory } from 'react-router';
-import firebase from 'firebase';
+
+import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../services/firebase';
+
 import {
   Container,
   TopWrapper,
@@ -35,8 +38,6 @@ import {
   subjectsOptions,
   weekDayOptions,
 } from '../../data/selectMenuOptions';
-import { api } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -88,34 +89,36 @@ export const Teach = (): JSX.Element => {
     control,
   });
 
-  const submitProfileChanges = useCallback(async (data: FormProps) => {
-    try {
-      if (!user) {
-        history.push('/');
+  const submitProfileChanges = useCallback(
+    async (data: FormProps) => {
+      try {
+        if (!user) {
+          history.push('/');
+          return;
+        }
+
+        await db
+          .collection('teachers')
+          .doc(user?.id)
+          .update({
+            whatsapp: data.whatsapp,
+            bio: data.bio,
+            subject: data.subject,
+            price: data.price * 100,
+            availableSchedule: data.availableSchedule,
+          });
+
+        console.log('Cadastro de aula realizado com sucesso');
+
+        history.push('/success/3');
+
         return;
+      } catch (error) {
+        console.log(error.message);
       }
-
-      const db = firebase.firestore();
-      await db
-        .collection('teachers')
-        .doc(user?.id)
-        .update({
-          whatsapp: data.whatsapp,
-          bio: data.bio,
-          subject: data.subject,
-          price: data.price * 100,
-          availableSchedule: data.availableSchedule,
-        });
-
-      console.log('Cadastro de aula realizado com sucesso');
-
-      history.push('/success/3');
-
-      return;
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+    },
+    [history, user],
+  );
 
   useEffect(() => {
     if (!user) {
@@ -129,7 +132,6 @@ export const Teach = (): JSX.Element => {
         return;
       }
 
-      const db = firebase.firestore();
       const response = await db
         .collection('teachers')
         .doc(user?.id)
@@ -166,7 +168,7 @@ export const Teach = (): JSX.Element => {
     };
 
     getFormInitialData();
-  }, []);
+  }, [history, reset, user]);
 
   if (isLoading === true) {
     return <p>Loading...</p>;

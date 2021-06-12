@@ -7,15 +7,15 @@ import { v4 as uuid } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import firebase from '../../services/firebase';
+import { useAuth } from '../../hooks/useAuth';
+
 import { RegistrationInput } from '../../components/RegistrationInput';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
 import { Container, FormContainer, FormSection, Form } from './styles';
 
 import backArrowImg from '../../assets/back.svg';
-import { api } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../services/firebase';
 
 interface FormProps {
   name: string;
@@ -52,29 +52,8 @@ export const SignUp = (): JSX.Element => {
       signUp(name, lastName, email, password);
 
       try {
-        const response = await api.get(`/teachers?email=${email}`);
-
-        if (response.data.length !== 0) {
-          console.log('E-mail já cadastrado');
-          return;
-        }
-
-        // await api.post('/teachers', {
-        //   id: uuid(),
-        //   name,
-        //   lastName,
-        //   email,
-        //   avatar: '',
-        //   whatsapp: '',
-        //   bio: '',
-        //   subject: '',
-        //   price: 0,
-        //   availableSchedule: [],
-        // });
-
         const userId = uuid();
 
-        const db = firebase.firestore();
         await db.collection('teachers').doc(userId).set({
           id: userId,
           name,
@@ -94,7 +73,7 @@ export const SignUp = (): JSX.Element => {
         console.log(error.message);
       }
     },
-    [history],
+    [history, signUp],
   );
 
   return (

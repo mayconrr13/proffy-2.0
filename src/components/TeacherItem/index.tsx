@@ -8,8 +8,8 @@ import {
 
 import dayHourImg from '../../assets/day-hour.svg';
 import whatsappImg from '../../assets/whatsapp.svg';
-import { api } from '../../services/api';
-import { scheduleOptions, subjectsOptions } from '../../data/selectMenuOptions';
+import { subjectsOptions } from '../../data/selectMenuOptions';
+import { db } from '../../services/firebase';
 
 const weekDaysInPortugues = [
   'Segunda',
@@ -91,11 +91,9 @@ export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
   const getInTouchWithTeacher = useCallback(
     async (whatsapp: string, id: string) => {
       try {
-        await api.post('/connections', {
-          connection: id,
-        });
+        await db.collection('connections').add({ id });
 
-        window.open(`https://wa.me/55${whatsapp}`);
+        window.open(`https://wa.me/155${whatsapp}`);
 
         return;
       } catch (error) {

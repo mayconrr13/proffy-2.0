@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -11,6 +11,7 @@ import { Container, FormContainer, FormSection, Form } from './styles';
 
 import backArrowImg from '../../assets/back.svg';
 import { RegistrationInput } from '../../components/RegistrationInput';
+import { auth } from '../../services/firebase';
 
 interface FormProps {
   email: string;
@@ -26,6 +27,8 @@ const schema = yup.object().shape({
 });
 
 export const ResetPassword = (): JSX.Element => {
+  const history = useHistory();
+
   const {
     register,
     handleSubmit,
@@ -36,9 +39,18 @@ export const ResetPassword = (): JSX.Element => {
 
   console.log(errors);
 
-  const submitPasswordReset = useCallback((data) => {
-    console.log(data);
-  }, []);
+  const submitPasswordReset = useCallback(
+    async (data) => {
+      try {
+        await auth.sendPasswordResetEmail(data.email);
+
+        history.push('/');
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [history],
+  );
 
   return (
     <Container>

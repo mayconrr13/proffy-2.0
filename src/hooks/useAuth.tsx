@@ -6,8 +6,7 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import { api } from '../services/api';
-import firebase from '../services/firebase';
+import { auth, db } from '../services/firebase';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -40,40 +39,21 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<UserProps | null>(null);
   console.log(user);
 
-  async function getUser() {
-    // const userData = await firebase
-    //   .firestore()
-    //   .collection('teachers')
-    //   .where('email', '==', 'mayconrr1395@gmail.com')
-    //   .get()
-    //   .then((result) => console.log(result.docs[0].data()));
-
-    const userData = await firebase
-      .firestore()
-      .collection('teachers')
-      .doc(user?.id)
-      .get()
-      .then((result) => result.data());
-
-    console.log(userData);
-  }
-
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(async (currentUser) => {
+    auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
-        const db = firebase.firestore();
         const userData = await db
           .collection('teachers')
           .where('email', '==', currentUser.email)
           .get()
-          .then((result) => result.docs[0].data());
+          .then((result) => result.docs.map((doc) => doc.data()));
 
         setUser({
-          id: userData.id,
-          email: userData.email,
-          name: userData.name,
-          lastName: userData.lastName,
-          avatar: userData.avatar,
+          id: userData[0].id,
+          email: userData[0].email,
+          name: userData[0].name,
+          lastName: userData[0].lastName,
+          avatar: userData[0].avatar,
         });
       } else {
         setUser(null);
@@ -84,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const signIn = useCallback(
     async (email: string, password: string): Promise<void> => {
       try {
-        await firebase.auth().signInWithEmailAndPassword(email, password);
+        await auth.signInWithEmailAndPassword(email, password);
         return;
       } catch (error) {
         console.log(error.message);
@@ -101,9 +81,9 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       password: string,
     ): Promise<void> => {
       try {
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        await auth.createUserWithEmailAndPassword(email, password);
 
-        await firebase.auth().currentUser?.updateProfile({
+        await auth.currentUser?.updateProfile({
           displayName: `${name} ${lastName}`,
         });
         return;
@@ -116,7 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signOut = useCallback((): void => {
     try {
-      firebase.auth().signOut();
+      auth.signOut();
       return;
     } catch (error) {
       console.log(error.message);
@@ -161,6 +141,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const useAuth = () => {
   const context = useContext(AuthContext);
 

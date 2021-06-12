@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+
+import { db } from '../../services/firebase';
+
 import {
   Container,
   HomeHeader,
@@ -17,21 +21,21 @@ import homeImg from '../../assets/home-image.svg';
 import heartImg from '../../assets/heart.svg';
 import boardImg from '../../assets/board.svg';
 import studyImg from '../../assets/study.svg';
-import { api } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
 
 export const Home = (): JSX.Element => {
-  const { user, setUser, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [connections, setConnections] = useState(0);
 
   useEffect(() => {
     const getNumberOfConnections = async () => {
       try {
-        const response = await api.get('/connections');
+        const totalConnections = await db.collection('connections').get();
 
-        return setConnections(response.data.length);
+        setConnections(totalConnections.docs.length);
+
+        return;
       } catch (error) {
-        return error.message;
+        console.log(error.message);
       }
     };
 

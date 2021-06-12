@@ -1,11 +1,12 @@
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import { useHistory } from 'react-router-dom';
-import firebase from 'firebase';
+import { useAuth } from '../../hooks/useAuth';
+
 import {
   Container,
   TopWrapper,
@@ -35,9 +36,7 @@ import {
   subjectsOptions,
   weekDayOptions,
 } from '../../data/selectMenuOptions';
-
-import { api } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../services/firebase';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -92,37 +91,39 @@ export const Profile = (): JSX.Element => {
     control,
   });
 
-  const submitProfileChanges = useCallback(async (data) => {
-    try {
-      if (!user) {
+  const submitProfileChanges = useCallback(
+    async (data) => {
+      try {
+        if (!user) {
+          history.push('/');
+          return;
+        }
+
+        await db
+          .collection('teachers')
+          .doc(user?.id)
+          .update({
+            name: data.name,
+            lastName: data.lastName,
+            email: data.email,
+            whatsapp: data.whatsapp,
+            bio: data.bio,
+            subject: data.subject,
+            price: data.price * 100,
+            availableSchedule: data.availableSchedule,
+          });
+
+        console.log('Dados atualizados com sucesso');
+
         history.push('/');
+
         return;
+      } catch (error) {
+        console.log(error.message);
       }
-
-      const db = firebase.firestore();
-      await db
-        .collection('teachers')
-        .doc(user?.id)
-        .update({
-          name: data.name,
-          lastName: data.lastName,
-          email: data.email,
-          whatsapp: data.whatsapp,
-          bio: data.bio,
-          subject: data.subject,
-          price: data.price * 100,
-          availableSchedule: data.availableSchedule,
-        });
-
-      console.log('Dados atualizados com sucesso');
-
-      history.push('/');
-
-      return;
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+    },
+    [history, user],
+  );
 
   useEffect(() => {
     const getFormInitialData = async () => {
@@ -131,7 +132,6 @@ export const Profile = (): JSX.Element => {
         return;
       }
 
-      const db = firebase.firestore();
       const response = await db
         .collection('teachers')
         .doc(user?.id)
@@ -171,7 +171,7 @@ export const Profile = (): JSX.Element => {
     };
 
     getFormInitialData();
-  }, [reset]);
+  }, [reset, history, user]);
 
   if (isLoading === true) {
     return <p>Loading...</p>;

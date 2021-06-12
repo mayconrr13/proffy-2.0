@@ -2,20 +2,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import {
-  forwardRef,
-  ForwardRefRenderFunction,
-  useEffect,
-  useState,
-} from 'react';
+import { forwardRef, ForwardRefRenderFunction } from 'react';
 import { useForm } from 'react-hook-form';
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement> = (
   { ...rest },
   ref,
 ): JSX.Element => {
-  const [option, setOption] = useState('');
-
   return (
     <div>
       <span>Selecione uma disciplina</span>

@@ -1,11 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import firebase from 'firebase';
+
+import { db } from '../../services/firebase';
+
 import { Header } from '../../components/Header';
 import { SelectBox } from '../../components/SelectBox';
 import { TeacherItem } from '../../components/TeacherItem/index';
-import { api } from '../../services/api';
 
 import {
   TopWrapper,
@@ -17,6 +18,7 @@ import {
 
 import geekImg from '../../assets/geek.svg';
 import searchImg from '../../assets/search.svg';
+
 import {
   scheduleOptions,
   subjectsOptions,
@@ -50,55 +52,62 @@ export const Study = (): JSX.Element => {
 
   const { register, handleSubmit } = useForm();
 
-  const handleSearchTeachers = useCallback(async (data) => {
-    const formatedData = {
-      ...data,
-      day: Number(data.day),
-      hour: Number(data.hour),
-    };
+  const handleSearchTeachers = useCallback(
+    async (data) => {
+      const formatedData = {
+        ...data,
+        day: Number(data.day),
+        hour: Number(data.hour),
+      };
 
-    const { subject, day, hour } = formatedData;
+      const { subject, day, hour } = formatedData;
 
-    try {
-      const db = firebase.firestore();
-      const response = await db
-        .collection('teachers')
-        .where('subject', '==', subject)
-        .get()
-        .then((results) =>
-          results.docs.map((doc) => doc.data() as TeacherProps),
-        );
+      try {
+        const response = await db
+          .collection('teachers')
+          .where('subject', '==', subject)
+          .get()
+          .then((results) =>
+            results.docs.map((doc) => doc.data() as TeacherProps),
+          );
 
-      if (response.length === 0 && teachers.length !== 0) {
-        setTeachers([]);
-        return;
-      }
+        if (response.length === 0 && teachers.length !== 0) {
+          setTeachers([]);
+          return;
+        }
 
-      const filteredTeachersByWeekDay = response.filter((teacher) => {
-        return teacher.availableSchedule.some(
-          (date) => Number(date.weekDay) === day,
-        );
-      });
-
-      const availableTeachers = filteredTeachersByWeekDay.filter((teacher) => {
-        const isAvailable = teacher.availableSchedule.some((date) => {
-          return Number(date.from) <= hour && Number(date.to) >= hour;
+        const filteredTeachersByWeekDay = response.filter((teacher) => {
+          return teacher.availableSchedule.some(
+            (date) => Number(date.weekDay) === day,
+          );
         });
 
-        return isAvailable && teacher;
-      });
+        const availableTeachers = filteredTeachersByWeekDay.filter(
+          (teacher) => {
+            const isAvailable = teacher.availableSchedule.some((date) => {
+              return Number(date.from) <= hour && Number(date.to) >= hour;
+            });
 
-      setTeachers(availableTeachers);
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+            return isAvailable && teacher;
+          },
+        );
+
+        setTeachers(availableTeachers);
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+    [teachers.length],
+  );
 
   useEffect(() => {
     const numberOfTeachersRegistered = async () => {
-      const response = await api.get('/teachers');
+      const response = await db
+        .collection('teachers')
+        .get()
+        .then((results) => results.docs.length);
 
-      setTotalTeacherRegistered(response.data.length);
+      setTotalTeacherRegistered(response);
     };
 
     numberOfTeachersRegistered();
