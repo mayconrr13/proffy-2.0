@@ -2,97 +2,90 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { forwardRef, ForwardRefRenderFunction } from 'react';
+
+import { ChangeEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-const InputBase: ForwardRefRenderFunction<HTMLInputElement> = (
-  { ...rest },
-  ref,
-): JSX.Element => {
-  return (
-    <div>
-      <span>Selecione uma disciplina</span>
-
-      <div>
-        <div>
-          <input
-            type="radio"
-            id="art"
-            value="art"
-            name="subject"
-            ref={ref}
-            {...rest}
-          />
-          <label htmlFor="art">Artes</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="bio"
-            value="bio"
-            name="subject"
-            ref={ref}
-            {...rest}
-          />
-          <label htmlFor="bio">Bio</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="physics"
-            value="physics"
-            name="subject"
-            ref={ref}
-            {...rest}
-          />
-          <label htmlFor="physics">Física</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="math"
-            value="math"
-            name="subject"
-            ref={ref}
-            {...rest}
-          />
-          <label htmlFor="math">Matemática</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="math"
-            value={0}
-            name="subject"
-            ref={ref}
-            {...rest}
-          />
-          <label htmlFor="math">Matemática</label>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Input = forwardRef(InputBase);
+import { storage } from '../services/firebase';
 
 export const Teste = (): JSX.Element => {
   const { register, handleSubmit } = useForm();
 
-  function submitted(data: any) {
-    console.log(data);
+  const avatarInput = register('avatar', { required: true });
+
+  const [localURL, setLocalURL] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
+
+  function handleImagePreview(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) {
+      setLocalURL('');
+      return;
+    }
+
+    setLocalURL(URL.createObjectURL(e.target.files[0]));
+  }
+
+  async function submitted(data: any) {
+    console.log(data.avatar);
+
+    try {
+      if (userAvatar !== '') {
+        await storage.refFromURL(userAvatar).delete();
+      }
+
+      const fileRef = storage.ref().child(data.avatar[0].name);
+      await fileRef.put(data.avatar[0]);
+
+      const avatarURL = await fileRef.getDownloadURL();
+      setUserAvatar(avatarURL);
+      return;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
     <div style={{ display: 'flex' }}>
       <form onSubmit={handleSubmit(submitted)}>
-        <Input {...register('subject')} />
+        <label htmlFor="avatar">
+          <input
+            type="file"
+            id="avatar"
+            ref={avatarInput.ref}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              avatarInput.onChange(e); // method from hook form register
+              handleImagePreview(e); // your method
+            }}
+            name="avatar"
+            style={{
+              display: 'none',
+            }}
+          />
+          +
+        </label>
 
-        <select id="teste" {...register('teste')}>
-          <option value={0}>0</option>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-        </select>
+        {!localURL && !userAvatar ? (
+          <span
+            style={{
+              display: 'block',
+              width: '200px',
+              height: '200px',
+              borderRadius: '50%',
+              backgroundColor: 'tomato',
+              textAlign: 'center',
+              lineHeight: '200px',
+              fontSize: '80px',
+            }}
+          >
+            MR
+          </span>
+        ) : (
+          <img
+            src={localURL === '' ? userAvatar : localURL}
+            alt="Avatar"
+            style={{ width: '200px', height: '200px', borderRadius: '50%' }}
+          />
+        )}
+
         <button type="submit">submit</button>
       </form>
     </div>

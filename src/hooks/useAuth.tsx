@@ -14,10 +14,10 @@ interface AuthProviderProps {
 
 interface UserProps {
   id: string;
-  email: string | null;
-  name: string | null;
-  lastName: string | null;
-  avatar: string | null;
+  email: string;
+  name: string;
+  lastName: string;
+  avatar: string;
 }
 
 interface AuthContextData {

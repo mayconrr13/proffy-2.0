@@ -49,8 +49,8 @@ export const Home = (): JSX.Element => {
           {user ? (
             <>
               <div>
-                <img src={profileImg} alt="Professor" />
-                <Link to="/profile">{user.name}</Link>
+                <img src={user.avatar} alt="Professor" />
+                <Link to="/profile">{`${user.name} ${user.lastName}`}</Link>
               </div>
               <button type="button" onClick={signOut}>
                 Sair

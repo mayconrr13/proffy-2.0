@@ -61,24 +61,47 @@ const schema = yup.object().shape({
 });
 
 export const Teach = (): JSX.Element => {
-  const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
-    AvailableScheduleProps[]
-  >([] as AvailableScheduleProps[]);
+  // const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
+  //   AvailableScheduleProps[]
+  // >([] as AvailableScheduleProps[]);
 
-  const [initialSubject, setInitialSubject] = useState('');
+  const [initialData, setInitialData] = useState<FormProps>({} as FormProps);
+
+  const [subject, setSubject] = useState('');
+  const [userInitials, setUserInitials] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
 
   const { user } = useAuth();
   const history = useHistory();
 
+  const getUserInitials = useCallback((firstName: string, lastName: string) => {
+    const firstLetter = firstName.split('')[0];
+    const secondLetter = lastName.split('')[0];
+
+    setUserInitials(firstLetter + secondLetter);
+  }, []);
+
   const cleanInitialAvailableSchedule = useCallback(() => {
-    if (initialAvailableSchedule.length === 0) {
+    if (initialData.availableSchedule.length === 0) {
       return;
     }
 
-    setInitialAvailableSchedule([] as AvailableScheduleProps[]);
-  }, [initialAvailableSchedule]);
+    setInitialData({
+      ...initialData,
+      availableSchedule: [] as AvailableScheduleProps[],
+    });
+  }, [initialData]);
+
+  const getUserSubject = useCallback((subjectCode) => {
+    const selectedSubject = subjectsOptions.find(
+      (option) => option.id === subjectCode,
+    );
+
+    if (selectedSubject) {
+      setSubject(selectedSubject.data);
+    }
+  }, []);
 
   const { register, control, handleSubmit, reset } = useForm<FormProps>({
     resolver: yupResolver(schema),
@@ -138,17 +161,7 @@ export const Teach = (): JSX.Element => {
         .get()
         .then((result) => result.data());
 
-      setInitialAvailableSchedule(
-        response?.availableSchedule.map((schedule: AvailableScheduleProps) => {
-          return {
-            weekDay: Number(schedule.weekDay),
-            from: Number(schedule.from),
-            to: Number(schedule.to),
-          };
-        }),
-      );
-      setInitialSubject(response?.subject);
-      reset({
+      const userInitialData: FormProps = {
         whatsapp: response?.whatsapp,
         bio: response?.bio,
         price: response?.price / 100,
@@ -162,13 +175,16 @@ export const Teach = (): JSX.Element => {
             };
           },
         ),
-      });
+      };
 
+      reset(userInitialData);
+      getUserSubject(userInitialData.subject);
+      setInitialData(userInitialData);
       setIsLoading(false);
     };
 
     getFormInitialData();
-  }, [history, reset, user]);
+  }, [getUserSubject, history, reset, user]);
 
   if (isLoading === true) {
     return <p>Loading...</p>;
@@ -209,10 +225,16 @@ export const Teach = (): JSX.Element => {
             <span />
 
             <ContactSection>
-              <div>
-                <img src={profileImg} alt="Nome" />
-                <h3>Severo Snape</h3>
-              </div>
+              {user && (
+                <div>
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.name} />
+                  ) : (
+                    <div>{userInitials}</div>
+                  )}
+                  <h3>{`${user.name} ${user.lastName}`}</h3>
+                </div>
+              )}
 
               <ProfileInput
                 type="text"
@@ -238,7 +260,7 @@ export const Teach = (): JSX.Element => {
                   placeholder="Disciplina"
                   content={subjectsOptions}
                   defaultItem={
-                    initialSubject !== '' ? initialSubject : undefined
+                    initialData.subject !== '' ? initialData.subject : undefined
                   }
                   {...register('subject')}
                 />
@@ -280,8 +302,8 @@ export const Teach = (): JSX.Element => {
                           placeholder="Dia"
                           content={weekDayOptions}
                           defaultItem={
-                            index <= initialAvailableSchedule.length - 1
-                              ? initialAvailableSchedule[index].weekDay
+                            index <= initialData.availableSchedule.length - 1
+                              ? initialData.availableSchedule[index].weekDay
                               : undefined
                           }
                           {...register(
@@ -300,8 +322,8 @@ export const Teach = (): JSX.Element => {
                             placeholder="Horário"
                             content={scheduleOptions}
                             defaultItem={
-                              index <= initialAvailableSchedule.length - 1
-                                ? initialAvailableSchedule[index].from
+                              index <= initialData.availableSchedule.length - 1
+                                ? initialData.availableSchedule[index].from
                                 : undefined
                             }
                             {...register(
@@ -318,8 +340,8 @@ export const Teach = (): JSX.Element => {
                             placeholder="Horário"
                             content={scheduleOptions}
                             defaultItem={
-                              index <= initialAvailableSchedule.length - 1
-                                ? initialAvailableSchedule[index].to
+                              index <= initialData.availableSchedule.length - 1
+                                ? initialData.availableSchedule[index].to
                                 : undefined
                             }
                             {...register(

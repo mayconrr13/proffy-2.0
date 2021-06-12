@@ -1,5 +1,5 @@
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -36,7 +36,7 @@ import {
   subjectsOptions,
   weekDayOptions,
 } from '../../data/selectMenuOptions';
-import { db } from '../../services/firebase';
+import { auth, db, storage } from '../../services/firebase';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -63,24 +63,82 @@ const schema = yup.object().shape({
 });
 
 export const Profile = (): JSX.Element => {
-  const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
-    AvailableScheduleProps[]
-  >([] as AvailableScheduleProps[]);
-
-  const [initialSubject, setInitialSubject] = useState('');
-
-  const [isLoading, setIsLoading] = useState(true);
-
   const { user } = useAuth();
   const history = useHistory();
 
-  const cleanInitialAvailableSchedule = useCallback(() => {
-    if (initialAvailableSchedule.length === 0) {
+  const [initialData, setInitialData] = useState<FormProps>({} as FormProps);
+  const [subject, setSubject] = useState<string>('');
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [localURL, setLocalURL] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
+
+  const [userInitials, setUserInitials] = useState('');
+
+  async function handleImagePreview(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) {
+      setLocalURL('');
       return;
     }
 
-    setInitialAvailableSchedule([] as AvailableScheduleProps[]);
-  }, [initialAvailableSchedule]);
+    const file = e.target.files[0];
+
+    setLocalURL(URL.createObjectURL(file));
+
+    try {
+      if (userAvatar !== '') {
+        await storage.refFromURL(userAvatar).delete();
+      }
+
+      const fileRef = storage.ref().child(file.name);
+      await fileRef.put(file);
+
+      const avatarURL = await fileRef.getDownloadURL();
+
+      setUserAvatar(avatarURL);
+      await auth.currentUser?.updateProfile({
+        photoURL: avatarURL,
+      });
+      if (user) {
+        await db.collection('teachers').doc(user.id).update({
+          avatar: avatarURL,
+        });
+      }
+
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getUserSubject = useCallback((subjectCode) => {
+    const selectedSubject = subjectsOptions.find(
+      (option) => option.id === subjectCode,
+    );
+
+    if (selectedSubject) {
+      setSubject(selectedSubject.data);
+    }
+  }, []);
+
+  const getUserInitials = useCallback((firstName: string, lastName: string) => {
+    const firstLetter = firstName.split('')[0];
+    const secondLetter = lastName.split('')[0];
+
+    setUserInitials(firstLetter + secondLetter);
+  }, []);
+
+  const clearInitialAvailableSchedule = useCallback(() => {
+    if (initialData.availableSchedule.length === 0) {
+      return;
+    }
+
+    setInitialData({
+      ...initialData,
+      availableSchedule: [] as AvailableScheduleProps[],
+    });
+  }, [initialData]);
 
   const { register, control, handleSubmit, reset } = useForm<FormProps>({
     resolver: yupResolver(schema),
@@ -138,18 +196,7 @@ export const Profile = (): JSX.Element => {
         .get()
         .then((result) => result.data());
 
-      setInitialAvailableSchedule(
-        response?.availableSchedule.map((schedule: AvailableScheduleProps) => {
-          return {
-            weekDay: Number(schedule.weekDay),
-            from: Number(schedule.from),
-            to: Number(schedule.to),
-          };
-        }),
-      );
-
-      setInitialSubject(response?.subject);
-      reset({
+      const userInitialData: FormProps = {
         name: response?.name,
         lastName: response?.lastName,
         email: response?.email,
@@ -166,12 +213,22 @@ export const Profile = (): JSX.Element => {
             };
           },
         ),
-      });
+      };
+
+      if (response?.avatar === '') {
+        getUserInitials(response?.name, response?.lastName);
+      } else {
+        setUserAvatar(response?.avatar);
+      }
+
+      reset(userInitialData);
+      getUserSubject(userInitialData.subject);
+      setInitialData(userInitialData);
       setIsLoading(false);
     };
 
     getFormInitialData();
-  }, [reset, history, user]);
+  }, [reset, history, user, getUserSubject, getUserInitials]);
 
   if (isLoading === true) {
     return <p>Loading...</p>;
@@ -184,14 +241,30 @@ export const Profile = (): JSX.Element => {
 
         <UserSection>
           <div>
-            <span>
-              <img src={cameraImg} alt="Alterar foto" />
-            </span>
+            <label htmlFor="avatar">
+              <input
+                type="file"
+                id="avatar"
+                onChange={(e) => handleImagePreview(e)}
+                name="avatar"
+              />
+              <img src={cameraImg} alt="Alterar avatar" />
+            </label>
+
+            {!localURL && !userAvatar ? (
+              <div>{userInitials}</div>
+            ) : (
+              <img
+                src={localURL === '' ? userAvatar : localURL}
+                alt="Avatar"
+                style={{ width: '200px', height: '200px', borderRadius: '50%' }}
+              />
+            )}
           </div>
 
-          <h2>Severo Snape</h2>
+          <h2>{`${initialData.name} ${initialData.lastName}`}</h2>
 
-          <span>Poções</span>
+          <span>{subject}</span>
         </UserSection>
       </TopWrapper>
 
@@ -234,7 +307,7 @@ export const Profile = (): JSX.Element => {
                   placeholder="Disciplina"
                   content={subjectsOptions}
                   defaultItem={
-                    initialSubject !== '' ? initialSubject : undefined
+                    initialData.subject !== '' ? initialData.subject : undefined
                   }
                   {...register('subject')}
                 />
@@ -275,8 +348,8 @@ export const Profile = (): JSX.Element => {
                           placeholder="Dia"
                           content={weekDayOptions}
                           defaultItem={
-                            index <= initialAvailableSchedule.length - 1
-                              ? initialAvailableSchedule[index].weekDay
+                            index <= initialData.availableSchedule.length - 1
+                              ? initialData.availableSchedule[index].weekDay
                               : undefined
                           }
                           {...register(
@@ -295,8 +368,8 @@ export const Profile = (): JSX.Element => {
                             placeholder="Horário"
                             content={scheduleOptions}
                             defaultItem={
-                              index <= initialAvailableSchedule.length - 1
-                                ? initialAvailableSchedule[index].from
+                              index <= initialData.availableSchedule.length - 1
+                                ? initialData.availableSchedule[index].from
                                 : undefined
                             }
                             {...register(
@@ -313,8 +386,8 @@ export const Profile = (): JSX.Element => {
                             placeholder="Horário"
                             content={scheduleOptions}
                             defaultItem={
-                              index <= initialAvailableSchedule.length - 1
-                                ? initialAvailableSchedule[index].to
+                              index <= initialData.availableSchedule.length - 1
+                                ? initialData.availableSchedule[index].to
                                 : undefined
                             }
                             {...register(
@@ -334,7 +407,7 @@ export const Profile = (): JSX.Element => {
                         type="button"
                         onClick={() => {
                           remove(index);
-                          cleanInitialAvailableSchedule();
+                          clearInitialAvailableSchedule();
                         }}
                       >
                         Excluir horário

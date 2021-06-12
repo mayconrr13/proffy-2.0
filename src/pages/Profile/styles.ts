@@ -45,18 +45,32 @@ export const UserSection = styled.section`
   background-size: cover;
 
   > div {
-    width: 9rem;
-    height: 9rem;
-    border: none;
-    border-radius: 50%;
-
-    background-image: url(${profileImg});
-    background-position: center 30%;
-    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     position: relative;
 
-    span {
+    > div {
+      width: 11rem;
+      height: 11rem;
+      border-radius: 50%;
+
+      text-align: center;
+      line-height: 11rem;
+      font-size: 4rem;
+      color: var(--text-title-purple);
+
+      background-color: var(--darker-purple);
+      border: 2px dashed var(--text-base-hover);
+    }
+
+    > img {
+      width: 11rem;
+      height: 11rem;
+    }
+
+    label {
       width: 2.5rem;
       height: 2.5rem;
       border: none;
@@ -71,6 +85,12 @@ export const UserSection = styled.section`
       position: absolute;
       bottom: 0;
       right: 0;
+
+      cursor: pointer;
+
+      input {
+        display: none;
+      }
 
       img {
         width: 1.5rem;
