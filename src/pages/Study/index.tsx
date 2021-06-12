@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import firebase from 'firebase';
 import { Header } from '../../components/Header';
 import { SelectBox } from '../../components/SelectBox';
 import { TeacherItem } from '../../components/TeacherItem/index';
@@ -59,16 +60,21 @@ export const Study = (): JSX.Element => {
     const { subject, day, hour } = formatedData;
 
     try {
-      const response = await api.get<TeacherProps[]>(
-        `/teachers?subject=${subject}`,
-      );
+      const db = firebase.firestore();
+      const response = await db
+        .collection('teachers')
+        .where('subject', '==', subject)
+        .get()
+        .then((results) =>
+          results.docs.map((doc) => doc.data() as TeacherProps),
+        );
 
-      if (response.data.length === 0 && teachers.length !== 0) {
+      if (response.length === 0 && teachers.length !== 0) {
         setTeachers([]);
         return;
       }
 
-      const filteredTeachersByWeekDay = response.data.filter((teacher) => {
+      const filteredTeachersByWeekDay = response.filter((teacher) => {
         return teacher.availableSchedule.some(
           (date) => Number(date.weekDay) === day,
         );

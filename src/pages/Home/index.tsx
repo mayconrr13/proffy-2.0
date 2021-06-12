@@ -21,7 +21,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 
 export const Home = (): JSX.Element => {
-  const { user } = useAuth();
+  const { user, setUser, signOut } = useAuth();
   const [connections, setConnections] = useState(0);
 
   useEffect(() => {
@@ -42,13 +42,15 @@ export const Home = (): JSX.Element => {
     <Container>
       <TopSection>
         <HomeHeader>
-          {Object.keys(user).length ? (
+          {user ? (
             <>
               <div>
                 <img src={profileImg} alt="Professor" />
-                <Link to="/profile">Severo Snape</Link>
+                <Link to="/profile">{user.name}</Link>
               </div>
-              <Link to="/home">Sair</Link>
+              <button type="button" onClick={signOut}>
+                Sair
+              </button>
             </>
           ) : (
             <>

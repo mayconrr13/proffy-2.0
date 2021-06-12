@@ -55,11 +55,15 @@ export const HomeHeader = styled.header`
     }
   }
 
-  > a {
+  > a,
+  > button {
     margin-left: auto;
     color: var(--text-base-purple);
     height: 2.5rem;
     line-height: 2.5rem;
+
+    border: none;
+    background-color: transparent;
 
     transition: color 0.2s;
 

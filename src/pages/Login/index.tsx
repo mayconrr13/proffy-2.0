@@ -40,22 +40,15 @@ export const Login = (): JSX.Element => {
   });
 
   const history = useHistory();
-  const { setUser } = useAuth();
+  const { setUser, signIn } = useAuth();
 
   const submitLogin = useCallback(
     async (data) => {
-      const { email } = data;
+      const { email, password } = data;
 
       try {
-        const response = await api.get(`/teachers?email=${email}`);
+        signIn(email, password);
 
-        console.log(response.data[0]);
-        if (response.data.length === 0) {
-          console.log('Combinação de e-mail e senha inválida');
-          return;
-        }
-
-        setUser(response.data[0]);
         history.push('/');
       } catch (error) {
         console.log(error.message);

@@ -17,12 +17,12 @@
   "teachers": [
     {
       "id": "3747f84c-4a66-4635-a3cd-28bd756e73b2",
-      "name": "Severus",
-      "lastName": "Snape",
+      "name": "O Fera",
+      "lastName": "Reis",
       "email": "mayconrr134@gmail.com",
       "avatar": "https://avatars.githubusercontent.com/u/69278888?v=4",
-      "whatsapp": "62999631104",
-      "subject": "biology",
+      "whatsapp": "62999631105",
+      "subject": "sciences",
       "bio": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of, comes from a line in section 1.10.32.",
       "price": 4000,
       "availableSchedule": [
@@ -30,11 +30,6 @@
           "weekDay": 3,
           "from": 480,
           "to": 1200
-        },
-        {
-          "weekDay": 2,
-          "from": 900,
-          "to": 1080
         },
         {
           "weekDay": 5,
@@ -48,14 +43,20 @@
     {
       "id": "6e306ff1-274a-4192-8296-47edc5764808",
       "name": "Maycon",
-      "lastName": "Rosário",
+      "lastName": "sem foto",
       "email": "mayconrr13@gmail.com",
       "avatar": "",
-      "whatsapp": "",
-      "bio": "",
-      "subject": "",
-      "price": 0,
-      "availableSchedule": []
+      "whatsapp": "62 9 9963-1103",
+      "bio": "hhrrhrrhrhrhrhrhrhrhr",
+      "subject": "art",
+      "price": 5000,
+      "availableSchedule": [
+        {
+          "weekDay": 0,
+          "from": 600,
+          "to": 720
+        }
+      ]
     },
     {
       "id": "9e47ba25-d5b3-4f0d-962f-141e4440f8cd",
@@ -74,6 +75,30 @@
           "to": "1320"
         }
       ]
+    },
+    {
+      "id": "0d67f5eb-c20d-4a85-84a4-b08801488a12",
+      "name": "Maycon",
+      "lastName": "RR",
+      "email": "mayconteste@gmail.com",
+      "avatar": "",
+      "whatsapp": "",
+      "bio": "",
+      "subject": "",
+      "price": 0,
+      "availableSchedule": []
+    },
+    {
+      "id": "ae187a50-f68e-4367-b37e-aef2a103d5f7",
+      "name": "Maycon",
+      "lastName": "Cadastro",
+      "email": "mayconrrteste@gmail.com",
+      "avatar": "",
+      "whatsapp": "",
+      "bio": "",
+      "subject": "",
+      "price": 0,
+      "availableSchedule": []
     }
   ]
 }

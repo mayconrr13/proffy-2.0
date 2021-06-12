@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import firebase from '../../services/firebase';
 import { RegistrationInput } from '../../components/RegistrationInput';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
@@ -32,6 +33,8 @@ const schema = yup.object().shape({
 });
 
 export const SignUp = (): JSX.Element => {
+  const { signUp } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -41,22 +44,39 @@ export const SignUp = (): JSX.Element => {
   });
 
   const history = useHistory();
-  const { setUser } = useAuth();
 
   const submitSignUp = useCallback(
     async (data) => {
       const { name, lastName, email, password } = data;
 
+      signUp(name, lastName, email, password);
+
       try {
-        const response = await api.get(`/registeredUsers?email=${email}`);
+        const response = await api.get(`/teachers?email=${email}`);
 
         if (response.data.length !== 0) {
           console.log('E-mail já cadastrado');
           return;
         }
 
-        await api.post('/teachers', {
-          id: uuid(),
+        // await api.post('/teachers', {
+        //   id: uuid(),
+        //   name,
+        //   lastName,
+        //   email,
+        //   avatar: '',
+        //   whatsapp: '',
+        //   bio: '',
+        //   subject: '',
+        //   price: 0,
+        //   availableSchedule: [],
+        // });
+
+        const userId = uuid();
+
+        const db = firebase.firestore();
+        await db.collection('teachers').doc(userId).set({
+          id: userId,
           name,
           lastName,
           email,
@@ -69,11 +89,12 @@ export const SignUp = (): JSX.Element => {
         });
 
         history.push('/success/1');
+        return;
       } catch (error) {
         console.log(error.message);
       }
     },
-    [history, setUser],
+    [history],
   );
 
   return (

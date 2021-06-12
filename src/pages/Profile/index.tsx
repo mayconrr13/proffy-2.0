@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { useHistory } from 'react-router-dom';
+import firebase from 'firebase';
 import {
   Container,
   TopWrapper,
@@ -93,16 +94,25 @@ export const Profile = (): JSX.Element => {
 
   const submitProfileChanges = useCallback(async (data) => {
     try {
-      await api.patch(`/teachers/${user.id}`, {
-        name: data.name,
-        lastName: data.lastName,
-        email: data.email,
-        whatsapp: data.whatsapp,
-        bio: data.bio,
-        subject: data.subject,
-        price: data.price * 100,
-        availableSchedule: data.availableSchedule,
-      });
+      if (!user) {
+        history.push('/');
+        return;
+      }
+
+      const db = firebase.firestore();
+      await db
+        .collection('teachers')
+        .doc(user?.id)
+        .update({
+          name: data.name,
+          lastName: data.lastName,
+          email: data.email,
+          whatsapp: data.whatsapp,
+          bio: data.bio,
+          subject: data.subject,
+          price: data.price * 100,
+          availableSchedule: data.availableSchedule,
+        });
 
       console.log('Dados atualizados com sucesso');
 
@@ -116,30 +126,38 @@ export const Profile = (): JSX.Element => {
 
   useEffect(() => {
     const getFormInitialData = async () => {
-      const response = await api.get(`/teachers?email=${user.email}`);
+      if (!user) {
+        history.push('/');
+        return;
+      }
+
+      const db = firebase.firestore();
+      const response = await db
+        .collection('teachers')
+        .doc(user?.id)
+        .get()
+        .then((result) => result.data());
 
       setInitialAvailableSchedule(
-        response.data[0].availableSchedule.map(
-          (schedule: AvailableScheduleProps) => {
-            return {
-              weekDay: Number(schedule.weekDay),
-              from: Number(schedule.from),
-              to: Number(schedule.to),
-            };
-          },
-        ),
+        response?.availableSchedule.map((schedule: AvailableScheduleProps) => {
+          return {
+            weekDay: Number(schedule.weekDay),
+            from: Number(schedule.from),
+            to: Number(schedule.to),
+          };
+        }),
       );
 
-      setInitialSubject(response.data[0].subject);
+      setInitialSubject(response?.subject);
       reset({
-        name: response.data[0].name,
-        lastName: response.data[0].lastName,
-        email: response.data[0].email,
-        whatsapp: response.data[0].whatsapp,
-        bio: response.data[0].bio,
-        price: response.data[0].price / 100,
-        subject: response.data[0].subject,
-        availableSchedule: response.data[0].availableSchedule.map(
+        name: response?.name,
+        lastName: response?.lastName,
+        email: response?.email,
+        whatsapp: response?.whatsapp,
+        bio: response?.bio,
+        price: response?.price / 100,
+        subject: response?.subject,
+        availableSchedule: response?.availableSchedule.map(
           (schedule: AvailableScheduleProps) => {
             return {
               weekDay: Number(schedule.weekDay),

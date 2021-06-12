@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import { api } from '../services/api';
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement> = (
   { ...rest },
@@ -19,78 +18,65 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement> = (
 
   return (
     <div>
-      <input type="text" value={option} {...rest} />
-      <ul>
-        <li onClick={() => setOption('1')} style={{ position: 'relative' }}>
+      <span>Selecione uma disciplina</span>
+
+      <div>
+        <div>
           <input
             type="radio"
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              // opacity: 0,
-              backgroundColor: 'tomato',
-            }}
+            id="art"
+            value="art"
+            name="subject"
             ref={ref}
-            value="1"
             {...rest}
           />
-          1
-        </li>
-        <li onClick={() => setOption('2')} style={{ position: 'relative' }}>
+          <label htmlFor="art">Artes</label>
+        </div>
+        <div>
           <input
             type="radio"
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              opacity: 0,
-            }}
+            id="bio"
+            value="bio"
+            name="subject"
             ref={ref}
-            value="2"
             {...rest}
           />
-          2
-        </li>
-        <li onClick={() => setOption('3')} style={{ position: 'relative' }}>
+          <label htmlFor="bio">Bio</label>
+        </div>
+        <div>
           <input
             type="radio"
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              opacity: 0,
-            }}
+            id="physics"
+            value="physics"
+            name="subject"
             ref={ref}
-            value="3"
             {...rest}
           />
-          3
-        </li>
-        <li onClick={() => setOption('4')} style={{ position: 'relative' }}>
+          <label htmlFor="physics">Física</label>
+        </div>
+        <div>
           <input
             type="radio"
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              opacity: 0,
-            }}
+            id="math"
+            value="math"
+            name="subject"
             ref={ref}
-            value="4"
             {...rest}
           />
-          4
-        </li>
-      </ul>
+          <label htmlFor="math">Matemática</label>
+        </div>
+        <div>
+          <input
+            type="radio"
+            id="math"
+            value={0}
+            name="subject"
+            ref={ref}
+            {...rest}
+          />
+          <label htmlFor="math">Matemática</label>
+        </div>
+      </div>
     </div>
   );
 };
@@ -100,33 +86,21 @@ const Input = forwardRef(InputBase);
 export const Teste = (): JSX.Element => {
   const { register, handleSubmit } = useForm();
 
-  useEffect(() => {
-    const fecthApi = async () => {
-      const response = await api.get('/teachers', {
-        params: {
-          availableSchedule: {
-            weekDay: 21,
-          },
-        },
-      });
-
-      console.log(response.data);
-    };
-
-    fecthApi();
-  }, []);
-
   function submitted(data: any) {
-    // console.log(data);
-    return data;
+    console.log(data);
   }
 
   return (
     <div style={{ display: 'flex' }}>
       <form onSubmit={handleSubmit(submitted)}>
-        <h1>select box</h1>
-        <Input {...register('input')} />
-        <button type="submit">ok</button>
+        <Input {...register('subject')} />
+
+        <select id="teste" {...register('teste')}>
+          <option value={0}>0</option>
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+        </select>
+        <button type="submit">submit</button>
       </form>
     </div>
   );
