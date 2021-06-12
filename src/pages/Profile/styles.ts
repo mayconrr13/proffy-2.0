@@ -68,6 +68,8 @@ export const UserSection = styled.section`
     > img {
       width: 11rem;
       height: 11rem;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
     label {

@@ -22,6 +22,7 @@ interface UserProps {
 
 interface AuthContextData {
   user: UserProps | null;
+  isLoading: boolean;
   setUser: (user: UserProps | null) => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
@@ -37,7 +38,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<UserProps | null>(null);
-  console.log(user);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     auth.onAuthStateChanged(async (currentUser) => {
@@ -55,8 +56,11 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
           lastName: userData[0].lastName,
           avatar: userData[0].avatar,
         });
+
+        setIsLoading(false);
       } else {
         setUser(null);
+        setIsLoading(false);
       }
     });
   }, []);
@@ -103,46 +107,20 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   async function getUserData() {
-  //     try {
-  //       if (localStorage.getItem('proffyauth.user') === null) {
-  //         return;
-  //       }
-
-  //       const currentUser: UserProps = JSON.parse(
-  //         localStorage.getItem('proffyauth.user') as string,
-  //       );
-
-  //       const response = await api.get(`/teachers?id=${currentUser.id}`);
-
-  //       const updatedUser = {
-  //         id: response.data[0].id,
-  //         email: response.data[0].email,
-  //         name: response.data[0].name,
-  //         lastName: response.data[0].lastName,
-  //         avatar: response.data[0].avatar,
-  //       };
-
-  //       setUser(updatedUser);
-  //       console.log(updatedUser);
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-
-  //   getUserData();
-  // }, []);
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, setUser, signIn, signUp, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const useAuth = () => {
+export const useAuth = (): AuthContextData => {
   const context = useContext(AuthContext);
 
   return context;

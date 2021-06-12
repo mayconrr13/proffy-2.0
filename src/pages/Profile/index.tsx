@@ -159,7 +159,7 @@ export const Profile = (): JSX.Element => {
 
         await db
           .collection('teachers')
-          .doc(user?.id)
+          .doc(user.id)
           .update({
             name: data.name,
             lastName: data.lastName,
@@ -192,7 +192,7 @@ export const Profile = (): JSX.Element => {
 
       const response = await db
         .collection('teachers')
-        .doc(user?.id)
+        .doc(user.id)
         .get()
         .then((result) => result.data());
 
@@ -251,14 +251,10 @@ export const Profile = (): JSX.Element => {
               <img src={cameraImg} alt="Alterar avatar" />
             </label>
 
-            {!localURL && !userAvatar ? (
+            {!isLoading && !localURL && !userAvatar ? (
               <div>{userInitials}</div>
             ) : (
-              <img
-                src={localURL === '' ? userAvatar : localURL}
-                alt="Avatar"
-                style={{ width: '200px', height: '200px', borderRadius: '50%' }}
-              />
+              <img src={localURL === '' ? userAvatar : localURL} alt="Avatar" />
             )}
           </div>
 
