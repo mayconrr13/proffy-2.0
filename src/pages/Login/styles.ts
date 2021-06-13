@@ -32,6 +32,12 @@ export const FormSection = styled.div`
 
   position: relative;
 
+  > a {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+  }
+
   > strong {
     font-size: 1.5rem;
     font-family: 'Poppins';

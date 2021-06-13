@@ -21,6 +21,7 @@ import {
 } from './styles';
 
 import heartImg from '../../assets/heart.svg';
+import backArrowImg from '../../assets/back.svg';
 
 interface FormProps {
   email: string;
@@ -73,6 +74,10 @@ export const Login = (): JSX.Element => {
 
       <FormContainer>
         <FormSection>
+          <Link to="/">
+            <img src={backArrowImg} alt="Voltar" />
+          </Link>
+
           <strong>Fazer Login</strong>
           <Form onSubmit={handleSubmit(submitLogin)}>
             <div>
