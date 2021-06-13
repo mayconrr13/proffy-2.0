@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { db } from '../../services/firebase';
+import { toast } from 'react-toastify';
+import firebase from '../../services/firebase';
 
 import { Header } from '../../components/Header';
 import { SelectBox } from '../../components/SelectBox';
@@ -63,7 +64,8 @@ export const Study = (): JSX.Element => {
       const { subject, day, hour } = formatedData;
 
       try {
-        const response = await db
+        const response = await firebase
+          .firestore()
           .collection('teachers')
           .where('subject', '==', subject)
           .get()
@@ -93,8 +95,10 @@ export const Study = (): JSX.Element => {
         );
 
         setTeachers(availableTeachers);
-      } catch (error) {
-        console.log(error.message);
+        return;
+      } catch {
+        toast('Erro ao buscar lista de professores');
+        return;
       }
     },
     [teachers.length],
@@ -102,7 +106,8 @@ export const Study = (): JSX.Element => {
 
   useEffect(() => {
     const numberOfTeachersRegistered = async () => {
-      const response = await db
+      const response = await firebase
+        .firestore()
         .collection('teachers')
         .get()
         .then((results) => results.docs.length);

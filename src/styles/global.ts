@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -44,5 +45,13 @@ export const GlobalStyle = createGlobalStyle`
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  .Toastify__toast {
+    border-radius: 0.5rem;
+  }
+
+  .Toastify__toast-body {
+    color: var(--text-title);
   }
 `;

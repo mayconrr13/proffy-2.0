@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 
-import { db } from '../../services/firebase';
+import firebase from '../../services/firebase';
 
 import {
   Container,
@@ -14,7 +14,6 @@ import {
   LinksContainer,
 } from './styles';
 
-import profileImg from '../../assets/profile-image.jpg';
 import logoImg from '../../assets/logo.svg';
 import descriptionImg from '../../assets/description.svg';
 import homeImg from '../../assets/home-image.svg';
@@ -29,7 +28,10 @@ export const Home = (): JSX.Element => {
   useEffect(() => {
     const getNumberOfConnections = async () => {
       try {
-        const totalConnections = await db.collection('connections').get();
+        const totalConnections = await firebase
+          .firestore()
+          .collection('connections')
+          .get();
 
         setConnections(totalConnections.docs.length);
 

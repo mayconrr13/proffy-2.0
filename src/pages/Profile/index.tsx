@@ -5,6 +5,8 @@ import { useHistory } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { toast } from 'react-toastify';
+import firebase from '../../services/firebase';
 import { useAuth } from '../../hooks/useAuth';
 
 import {
@@ -36,7 +38,6 @@ import {
   subjectsOptions,
   weekDayOptions,
 } from '../../data/selectMenuOptions';
-import { auth, db, storage } from '../../services/firebase';
 
 interface AvailableScheduleProps {
   weekDay: number;
@@ -88,27 +89,31 @@ export const Profile = (): JSX.Element => {
 
     try {
       if (userAvatar !== '') {
-        await storage.refFromURL(userAvatar).delete();
+        await firebase.storage().refFromURL(userAvatar).delete();
       }
 
-      const fileRef = storage.ref().child(file.name);
+      const fileRef = firebase.storage().ref().child(file.name);
       await fileRef.put(file);
 
       const avatarURL = await fileRef.getDownloadURL();
 
       setUserAvatar(avatarURL);
-      await auth.currentUser?.updateProfile({
+      await firebase.auth().currentUser?.updateProfile({
         photoURL: avatarURL,
       });
+
       if (user) {
-        await db.collection('teachers').doc(user.id).update({
+        await firebase.firestore().collection('teachers').doc(user.id).update({
           avatar: avatarURL,
         });
       }
 
+      toast('Avatar atualizado com sucesso');
+
       return;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      toast('Falha ao inserir/alterar a imagem do usuário');
+      return;
     }
   }
 
@@ -157,7 +162,12 @@ export const Profile = (): JSX.Element => {
           return;
         }
 
-        await db
+        if (initialData.email !== data.email) {
+          await firebase.auth().currentUser?.updateEmail(data.email);
+        }
+
+        await firebase
+          .firestore()
           .collection('teachers')
           .doc(user.id)
           .update({
@@ -171,16 +181,17 @@ export const Profile = (): JSX.Element => {
             availableSchedule: data.availableSchedule,
           });
 
-        console.log('Dados atualizados com sucesso');
+        toast('Dados atualizados com sucesso');
 
         history.push('/');
 
         return;
-      } catch (error) {
-        console.log(error.message);
+      } catch {
+        toast('Falha ao atualizar os dados do usuário');
+        return;
       }
     },
-    [history, user],
+    [history, initialData.email, user],
   );
 
   useEffect(() => {
@@ -190,41 +201,49 @@ export const Profile = (): JSX.Element => {
         return;
       }
 
-      const response = await db
-        .collection('teachers')
-        .doc(user.id)
-        .get()
-        .then((result) => result.data());
+      try {
+        const response = await firebase
+          .firestore()
+          .collection('teachers')
+          .doc(user.id)
+          .get()
+          .then((result) => result.data());
 
-      const userInitialData: FormProps = {
-        name: response?.name,
-        lastName: response?.lastName,
-        email: response?.email,
-        whatsapp: response?.whatsapp,
-        bio: response?.bio,
-        price: response?.price / 100,
-        subject: response?.subject,
-        availableSchedule: response?.availableSchedule.map(
-          (schedule: AvailableScheduleProps) => {
-            return {
-              weekDay: Number(schedule.weekDay),
-              from: Number(schedule.from),
-              to: Number(schedule.to),
-            };
-          },
-        ),
-      };
+        const userInitialData: FormProps = {
+          name: response?.name,
+          lastName: response?.lastName,
+          email: response?.email,
+          whatsapp: response?.whatsapp,
+          bio: response?.bio,
+          price: response?.price / 100,
+          subject: response?.subject,
+          availableSchedule: response?.availableSchedule.map(
+            (schedule: AvailableScheduleProps) => {
+              return {
+                weekDay: Number(schedule.weekDay),
+                from: Number(schedule.from),
+                to: Number(schedule.to),
+              };
+            },
+          ),
+        };
 
-      if (response?.avatar === '') {
-        getUserInitials(response?.name, response?.lastName);
-      } else {
-        setUserAvatar(response?.avatar);
+        if (response?.avatar === '') {
+          getUserInitials(response?.name, response?.lastName);
+        } else {
+          setUserAvatar(response?.avatar);
+        }
+
+        reset(userInitialData);
+        getUserSubject(userInitialData.subject);
+        setInitialData(userInitialData);
+        setIsLoading(false);
+        return;
+      } catch {
+        toast('Falha ao carregar os dados do usuário');
+        history.push('/');
+        return;
       }
-
-      reset(userInitialData);
-      getUserSubject(userInitialData.subject);
-      setInitialData(userInitialData);
-      setIsLoading(false);
     };
 
     getFormInitialData();

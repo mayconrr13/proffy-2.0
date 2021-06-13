@@ -9,7 +9,7 @@ import {
 import dayHourImg from '../../assets/day-hour.svg';
 import whatsappImg from '../../assets/whatsapp.svg';
 import { subjectsOptions } from '../../data/selectMenuOptions';
-import { db } from '../../services/firebase';
+import firebase from '../../services/firebase';
 
 const weekDaysInPortugues = [
   'Segunda',
@@ -91,7 +91,7 @@ export const TeacherItem = ({ teacher }: TeacherProps): JSX.Element => {
   const getInTouchWithTeacher = useCallback(
     async (whatsapp: string, id: string) => {
       try {
-        await db.collection('connections').add({ id });
+        await firebase.firestore().collection('connections').add({ id });
 
         window.open(`https://wa.me/155${whatsapp}`);
 

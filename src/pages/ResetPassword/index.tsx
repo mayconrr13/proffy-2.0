@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { toast } from 'react-toastify';
 import { RegistrationSideContainer } from '../../components/RegistrationSideContainer';
 import { RegistrationSubmitButton } from '../../components/RegistrationSubmitButton';
 import { Container, FormContainer, FormSection, Form } from './styles';
 
 import backArrowImg from '../../assets/back.svg';
 import { RegistrationInput } from '../../components/RegistrationInput';
-import { auth } from '../../services/firebase';
+import firebase from '../../services/firebase';
 
 interface FormProps {
   email: string;
@@ -42,11 +43,12 @@ export const ResetPassword = (): JSX.Element => {
   const submitPasswordReset = useCallback(
     async (data) => {
       try {
-        await auth.sendPasswordResetEmail(data.email);
+        await firebase.auth().sendPasswordResetEmail(data.email);
 
         history.push('/');
-      } catch (error) {
-        console.log(error);
+      } catch {
+        toast('Falha ao enviar o e-mail de alteração de senha');
+        return;
       }
     },
     [history],

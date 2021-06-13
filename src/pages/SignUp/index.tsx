@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
 
 import { RegistrationInput } from '../../components/RegistrationInput';
@@ -15,7 +16,7 @@ import { RegistrationSubmitButton } from '../../components/RegistrationSubmitBut
 import { Container, FormContainer, FormSection, Form } from './styles';
 
 import backArrowImg from '../../assets/back.svg';
-import { db } from '../../services/firebase';
+import firebase from '../../services/firebase';
 
 interface FormProps {
   name: string;
@@ -50,7 +51,7 @@ export const SignUp = (): JSX.Element => {
       try {
         const userId = uuid();
 
-        await db.collection('teachers').doc(userId).set({
+        await firebase.firestore().collection('teachers').doc(userId).set({
           id: userId,
           name,
           lastName,
@@ -65,8 +66,9 @@ export const SignUp = (): JSX.Element => {
 
         history.push('/success/1');
         return;
-      } catch (error) {
-        console.log(error.message);
+      } catch {
+        toast('Erro ao cadastrar novo usuário');
+        return;
       }
     },
     [history, signUp],

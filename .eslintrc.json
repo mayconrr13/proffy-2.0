@@ -25,6 +25,8 @@
     "prettier"
   ],
   "rules": {
+    "consistent-return": "off",
+    "no-useless-return": "off",
     "no-console": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",

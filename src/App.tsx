@@ -1,4 +1,5 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { SignUp } from './pages/SignUp';
@@ -7,7 +8,6 @@ import { Success } from './pages/Success';
 import { Profile } from './pages/Profile';
 import { Teach } from './pages/Teach';
 import { Study } from './pages/Study';
-import { Teste } from './pages/teste';
 
 import { GlobalStyle } from './styles/global';
 import { AuthProvider } from './hooks/useAuth';
@@ -17,6 +17,7 @@ function App(): JSX.Element {
     <AuthProvider>
       <BrowserRouter>
         <GlobalStyle />
+        <ToastContainer autoClose={3000} hideProgressBar />
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/login" component={Login} />
@@ -26,7 +27,6 @@ function App(): JSX.Element {
           <Route path="/profile" component={Profile} />
           <Route path="/teach" component={Teach} />
           <Route path="/study" component={Study} />
-          <Route path="/teste" component={Teste} />
         </Switch>
       </BrowserRouter>
     </AuthProvider>

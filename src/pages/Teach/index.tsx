@@ -6,8 +6,9 @@ import * as yup from 'yup';
 
 import { useHistory } from 'react-router';
 
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
-import { db } from '../../services/firebase';
+import firebase from '../../services/firebase';
 
 import {
   Container,
@@ -32,7 +33,6 @@ import { BiographyInput } from '../../components/BiographyInput';
 
 import alertImg from '../../assets/alert.svg';
 import rocketImg from '../../assets/rocket.svg';
-import profileImg from '../../assets/profile-image.jpg';
 import {
   scheduleOptions,
   subjectsOptions,
@@ -61,13 +61,8 @@ const schema = yup.object().shape({
 });
 
 export const Teach = (): JSX.Element => {
-  // const [initialAvailableSchedule, setInitialAvailableSchedule] = useState<
-  //   AvailableScheduleProps[]
-  // >([] as AvailableScheduleProps[]);
-
   const [initialData, setInitialData] = useState<FormProps>({} as FormProps);
 
-  const [subject, setSubject] = useState('');
   const [userInitials, setUserInitials] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
@@ -93,16 +88,6 @@ export const Teach = (): JSX.Element => {
     });
   }, [initialData]);
 
-  const getUserSubject = useCallback((subjectCode) => {
-    const selectedSubject = subjectsOptions.find(
-      (option) => option.id === subjectCode,
-    );
-
-    if (selectedSubject) {
-      setSubject(selectedSubject.data);
-    }
-  }, []);
-
   const { register, control, handleSubmit, reset } = useForm<FormProps>({
     resolver: yupResolver(schema),
   });
@@ -120,7 +105,8 @@ export const Teach = (): JSX.Element => {
           return;
         }
 
-        await db
+        await firebase
+          .firestore()
           .collection('teachers')
           .doc(user?.id)
           .update({
@@ -136,8 +122,9 @@ export const Teach = (): JSX.Element => {
         history.push('/success/3');
 
         return;
-      } catch (error) {
-        console.log(error.message);
+      } catch {
+        toast('Falha ao atualizar os dados do usuário');
+        return;
       }
     },
     [history, user],
@@ -155,36 +142,44 @@ export const Teach = (): JSX.Element => {
         return;
       }
 
-      const response = await db
-        .collection('teachers')
-        .doc(user?.id)
-        .get()
-        .then((result) => result.data());
+      try {
+        const response = await firebase
+          .firestore()
+          .collection('teachers')
+          .doc(user?.id)
+          .get()
+          .then((result) => result.data());
 
-      const userInitialData: FormProps = {
-        whatsapp: response?.whatsapp,
-        bio: response?.bio,
-        price: response?.price / 100,
-        subject: response?.subject,
-        availableSchedule: response?.availableSchedule.map(
-          (schedule: AvailableScheduleProps) => {
-            return {
-              weekDay: Number(schedule.weekDay),
-              from: Number(schedule.from),
-              to: Number(schedule.to),
-            };
-          },
-        ),
-      };
+        const userInitialData: FormProps = {
+          whatsapp: response?.whatsapp,
+          bio: response?.bio,
+          price: response?.price / 100,
+          subject: response?.subject,
+          availableSchedule: response?.availableSchedule.map(
+            (schedule: AvailableScheduleProps) => {
+              return {
+                weekDay: Number(schedule.weekDay),
+                from: Number(schedule.from),
+                to: Number(schedule.to),
+              };
+            },
+          ),
+        };
 
-      reset(userInitialData);
-      getUserSubject(userInitialData.subject);
-      setInitialData(userInitialData);
-      setIsLoading(false);
+        reset(userInitialData);
+        setInitialData(userInitialData);
+        setIsLoading(false);
+        return;
+      } catch {
+        toast('Falha ao carregar os dados do usuário');
+
+        history.push('/');
+        return;
+      }
     };
 
     getFormInitialData();
-  }, [getUserSubject, history, reset, user]);
+  }, [history, reset, user]);
 
   if (isLoading === true) {
     return <p>Loading...</p>;

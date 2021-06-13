@@ -1,4 +1,9 @@
-import firebase from 'firebase';
+/* eslint-disable import/no-duplicates */
+import firebase from 'firebase/app';
+
+import 'firebase/firestore';
+import 'firebase/storage';
+import 'firebase/auth';
 
 const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -11,6 +16,4 @@ const config = {
 
 firebase.initializeApp(config);
 
-export const db = firebase.firestore();
-export const storage = firebase.storage();
-export const auth = firebase.auth();
+export default firebase;

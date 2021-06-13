@@ -6,7 +6,9 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import { auth, db } from '../services/firebase';
+import { useHistory } from 'react-router';
+import { toast } from 'react-toastify';
+import firebase from '../services/firebase';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -40,10 +42,13 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<UserProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const history = useHistory();
+
   useEffect(() => {
-    auth.onAuthStateChanged(async (currentUser) => {
+    firebase.auth().onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
-        const userData = await db
+        const userData = await firebase
+          .firestore()
           .collection('teachers')
           .where('email', '==', currentUser.email)
           .get()
@@ -67,12 +72,15 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signIn = useCallback(
     async (email: string, password: string): Promise<void> => {
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-        return;
-      } catch (error) {
-        console.log(error.message);
-      }
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          history.push('/');
+        })
+        .catch(() => {
+          return toast('Combinação de e-mail e senha inválida');
+        });
     },
     [],
   );
@@ -85,14 +93,16 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       password: string,
     ): Promise<void> => {
       try {
-        await auth.createUserWithEmailAndPassword(email, password);
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
 
-        await auth.currentUser?.updateProfile({
+        await firebase.auth().currentUser?.updateProfile({
           displayName: `${name} ${lastName}`,
         });
+
         return;
-      } catch (error) {
-        console.log(error.message);
+      } catch {
+        toast('Erro ao realizar o cadastro');
+        return;
       }
     },
     [],
@@ -100,10 +110,11 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signOut = useCallback((): void => {
     try {
-      auth.signOut();
+      firebase.auth().signOut();
       return;
-    } catch (error) {
-      console.log(error.message);
+    } catch {
+      toast('Falha ao sair da sessão');
+      return;
     }
   }, []);
 

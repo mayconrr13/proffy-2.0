@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth';
 
 import { RegistrationInput } from '../../components/RegistrationInput';
@@ -39,7 +40,6 @@ export const Login = (): JSX.Element => {
     resolver: yupResolver(schema),
   });
 
-  const history = useHistory();
   const { signIn } = useAuth();
 
   const submitLogin = useCallback(
@@ -48,13 +48,12 @@ export const Login = (): JSX.Element => {
 
       try {
         await signIn(email, password);
-
-        history.push('/');
+        return;
       } catch (error) {
-        console.log(error.message);
+        return toast('Erro ao fazer login!');
       }
     },
-    [history, signIn],
+    [signIn],
   );
 
   return (

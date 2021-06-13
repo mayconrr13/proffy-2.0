@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import profileImg from '../../assets/profile-image.jpg';
 import profileBackgroundImg from '../../assets/profile-bg.svg';
 
 export const Container = styled.div`
