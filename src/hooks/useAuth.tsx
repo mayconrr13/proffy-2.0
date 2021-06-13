@@ -72,15 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signIn = useCallback(
     async (email: string, password: string): Promise<void> => {
-      await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          history.push('/');
-        })
-        .catch(() => {
-          return toast('Combinação de e-mail e senha inválida');
-        });
+      await firebase.auth().signInWithEmailAndPassword(email, password);
     },
     [],
   );
@@ -92,18 +84,13 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       email: string,
       password: string,
     ): Promise<void> => {
-      try {
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
 
-        await firebase.auth().currentUser?.updateProfile({
-          displayName: `${name} ${lastName}`,
-        });
+      await firebase.auth().currentUser?.updateProfile({
+        displayName: `${name} ${lastName}`,
+      });
 
-        return;
-      } catch {
-        toast('Erro ao realizar o cadastro');
-        return;
-      }
+      return;
     },
     [],
   );

@@ -41,6 +41,7 @@ export const Login = (): JSX.Element => {
   });
 
   const { signIn } = useAuth();
+  const history = useHistory();
 
   const submitLogin = useCallback(
     async (data) => {
@@ -48,12 +49,22 @@ export const Login = (): JSX.Element => {
 
       try {
         await signIn(email, password);
+
+        history.push('/');
         return;
       } catch (error) {
+        console.log(error);
+        if (
+          error.code === 'auth/user-not-found' ||
+          error.code === 'auth/wrong-password'
+        ) {
+          return toast('Combinação inválida de e-mail e senha');
+        }
+
         return toast('Erro ao fazer login!');
       }
     },
-    [signIn],
+    [history, signIn],
   );
 
   return (

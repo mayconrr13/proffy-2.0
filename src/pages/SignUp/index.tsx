@@ -46,9 +46,9 @@ export const SignUp = (): JSX.Element => {
     async (data) => {
       const { name, lastName, email, password } = data;
 
-      signUp(name, lastName, email, password);
-
       try {
+        await signUp(name, lastName, email, password);
+
         const userId = uuid();
 
         await firebase.firestore().collection('teachers').doc(userId).set({
@@ -66,7 +66,12 @@ export const SignUp = (): JSX.Element => {
 
         history.push('/success/1');
         return;
-      } catch {
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          toast('E-mail já cadastrado');
+          return;
+        }
+
         toast('Erro ao cadastrar novo usuário');
         return;
       }

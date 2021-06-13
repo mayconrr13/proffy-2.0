@@ -56,6 +56,11 @@ export const Study = (): JSX.Element => {
 
   const handleSearchTeachers = useCallback(
     async (data) => {
+      if (Object.values(data).some((field) => field == null || undefined)) {
+        toast('Por favor, selecione uma opção em todos os campos');
+        return;
+      }
+
       const formatedData = {
         ...data,
         day: Number(data.day),
@@ -104,12 +109,7 @@ export const Study = (): JSX.Element => {
         }
 
         return;
-      } catch {
-        if (Object.values(data).some((field) => field === undefined)) {
-          toast('Por favor, selecione a todos os campos');
-          return;
-        }
-
+      } catch (error) {
         toast('Erro ao buscar lista de professores');
         return;
       }
@@ -160,7 +160,7 @@ export const Study = (): JSX.Element => {
                 <SelectBox
                   placeholder="Disciplina"
                   content={subjectsOptions}
-                  {...(register('subject'), { required: true })}
+                  {...register('subject')}
                 />
               </section>
               <div>
@@ -169,7 +169,7 @@ export const Study = (): JSX.Element => {
                   <SelectBox
                     placeholder="Dia"
                     content={weekDayOptions}
-                    {...(register('day'), { required: true })}
+                    {...register('day')}
                   />
                 </section>
                 <section>
@@ -177,7 +177,7 @@ export const Study = (): JSX.Element => {
                   <SelectBox
                     placeholder="Horário"
                     content={scheduleOptions}
-                    {...(register('hour'), { required: true })}
+                    {...register('hour')}
                   />
                 </section>
               </div>
