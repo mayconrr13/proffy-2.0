@@ -49,6 +49,7 @@ export const Study = (): JSX.Element => {
   const [teachers, setTeachers] = useState<TeacherProps[]>(
     [] as TeacherProps[],
   );
+  const [noTeachersFound, setNoTeachersFound] = useState<boolean>(false);
   const [totalTeacherRegistered, setTotalTeacherRegistered] = useState(0);
 
   const { register, handleSubmit } = useForm();
@@ -75,6 +76,7 @@ export const Study = (): JSX.Element => {
 
         if (response.length === 0 && teachers.length !== 0) {
           setTeachers([]);
+          setNoTeachersFound(true);
           return;
         }
 
@@ -94,9 +96,20 @@ export const Study = (): JSX.Element => {
           },
         );
 
-        setTeachers(availableTeachers);
+        if (availableTeachers.length === 0) {
+          setNoTeachersFound(true);
+        } else {
+          setTeachers(availableTeachers);
+          setNoTeachersFound(false);
+        }
+
         return;
       } catch {
+        if (Object.values(data).some((field) => field === undefined)) {
+          toast('Por favor, selecione a todos os campos');
+          return;
+        }
+
         toast('Erro ao buscar lista de professores');
         return;
       }
@@ -147,8 +160,7 @@ export const Study = (): JSX.Element => {
                 <SelectBox
                   placeholder="Disciplina"
                   content={subjectsOptions}
-                  {...register('subject')}
-                  name="subject"
+                  {...(register('subject'), { required: true })}
                 />
               </section>
               <div>
@@ -157,7 +169,7 @@ export const Study = (): JSX.Element => {
                   <SelectBox
                     placeholder="Dia"
                     content={weekDayOptions}
-                    {...register('day')}
+                    {...(register('day'), { required: true })}
                   />
                 </section>
                 <section>
@@ -165,7 +177,7 @@ export const Study = (): JSX.Element => {
                   <SelectBox
                     placeholder="Horário"
                     content={scheduleOptions}
-                    {...register('hour')}
+                    {...(register('hour'), { required: true })}
                   />
                 </section>
               </div>
@@ -178,7 +190,7 @@ export const Study = (): JSX.Element => {
       </TopWrapper>
 
       <TeachersContainer>
-        {teachers.length === 0 ? (
+        {noTeachersFound ? (
           <p>Nenhum professor encontrado</p>
         ) : (
           teachers.map((teacher) => {

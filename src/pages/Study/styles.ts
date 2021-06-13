@@ -13,7 +13,6 @@ export const Container = styled.div`
 
 export const TopWrapper = styled.div`
   width: 100%;
-  height: 420px;
   background-color: var(--purple);
 
   display: flex;
