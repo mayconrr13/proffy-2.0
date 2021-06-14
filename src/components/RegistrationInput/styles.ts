@@ -68,10 +68,6 @@ export const Container = styled.div<InputProps>`
 
   input,
   span {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     -webkit-transition: all 0.2s;
     transition: all 0.2s;
     -webkit-transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
